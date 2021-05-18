@@ -1,4 +1,4 @@
-# A Bayesian Model of Diachronic Meaning Change
+# Logistic Stick Breaking Mixture Model of Diachronic Meaning Change
 
 ## Environment
 
@@ -32,3 +32,5 @@ $ ./scan -num_iteration=1000 -burn_in_period=500 -ignore_word_count=3 -data_path
 ## References
 
 - [A Bayesian Model of Diachronic Meaning Change. (2016). L. Frermann and M. Lapata.](https://www.aclweb.org/anthology/Q16-1003.pdf)
+- [Logistic Stick-Breaking Process. (2011). L. Ren et al.](https://www.jmlr.org/papers/volume12/ren11a/ren11a.pdf)
+- [Dependent Multinomial Models Made Easy: Stick Breaking with the Polya-Gamma Augmentation. (2015). S. W. Linderman et al.](https://www.cs.princeton.edu/~rpa/pubs/linderman2015multinomial.pdf)
