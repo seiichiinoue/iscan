@@ -1,0 +1,18 @@
+# dataset
+COHA/
+data/
+# binary
+bin/
+scan
+test
+infer
+prob
+# work files
+scripts/fig/
+scripts/*.py
+log/
+.work/
+.idea/
+*.sh
+*.pickle
+out*
