@@ -347,19 +347,19 @@ public:
         if (t == 0) {
             for (int k=0; k<_scan->_n_k; ++k) {
                 _prior_mean_phi[k] = _scan->_Phi[t+1][k];
-                prior_sigma = sqrt(1.0 / _scan->_kappa_phi);
             }
+            prior_sigma = sqrt(1.0 / _scan->_kappa_phi);
         } else if (t+1 == _scan->_n_t) {
             for (int k=0; k<_scan->_n_k; ++k) {
                 _prior_mean_phi[k] = _scan->_Phi[t-1][k];
-                prior_sigma = sqrt(1.0 / _scan->_kappa_phi);
             }
+            prior_sigma = sqrt(1.0 / _scan->_kappa_phi);
         } else {
             for (int k=0; k<_scan->_n_k; ++k) {
                 _prior_mean_phi[k] = _scan->_Phi[t-1][k] + _scan->_Phi[t+1][k];
                 _prior_mean_phi[k] *= 0.5;
-                prior_sigma = sqrt(1.0 / (2.0 * _scan->_kappa_phi));
             }
+            prior_sigma = sqrt(1.0 / (2.0 * _scan->_kappa_phi));
         }
         vector<int> cnt_t(_scan->_n_k, 0);
         int sum_cnt_t = 0;
@@ -396,7 +396,7 @@ public:
         for (int k=0; k<_scan->_n_k; ++k) {
             sum += _logistic_Phi[t][k];
         }
-        assert(abs(1.0 - sum) < 1e5);
+        assert(abs(1.0 - sum) < 1e-5);
         return;
     }
     void sample_psi(int t) {
@@ -409,19 +409,19 @@ public:
             if (t == 0) {
                 for (int v=0; v<_scan->_vocab_size; ++v) {
                     _prior_mean_psi[v] = _scan->_Psi[t+1][k][v];
-                    prior_sigma = sqrt(1.0 / _scan->_kappa_psi);
                 }
+                prior_sigma = sqrt(1.0 / _scan->_kappa_psi);
             } else if (t+1 == _scan->_n_t) {
                 for (int v=0; v<_scan->_vocab_size; ++v) {
                     _prior_mean_psi[v] = _scan->_Psi[t-1][k][v];
-                    prior_sigma = sqrt(1.0 / _scan->_kappa_psi);
                 }
+                prior_sigma = sqrt(1.0 / _scan->_kappa_psi);
             } else {
                 for (int v=0; v<_scan->_vocab_size; ++v) {
                     _prior_mean_psi[v] = _scan->_Psi[t-1][k][v] + _scan->_Psi[t+1][k][v];
                     _prior_mean_psi[v] *= 0.5;
-                    prior_sigma = sqrt(1.0 / (2.0 * _scan->_kappa_psi));
                 }
+                prior_sigma = sqrt(1.0 / (2.0 * _scan->_kappa_psi));
             }
             vector<int> cnt_t_k(_scan->_vocab_size, 0);
             int sum_cnt_t_k = 0;
@@ -471,7 +471,7 @@ public:
                 if (_word_frequency[v] < _ignore_word_count) continue;
                 sum += _logistic_Psi[t][k][v];
             }
-            assert(abs(1.0 - sum) < 1e5);
+            assert(abs(1.0 - sum) < 1e-5);
         }
         return;
     }
