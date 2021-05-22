@@ -2,6 +2,8 @@
 #include <random>
 #include <chrono>
 #include <boost/math/special_functions/erf.hpp>
+#include "common.hpp"
+#include "PolyaGammaHybrid.h"
 
 using namespace std;
 
@@ -11,6 +13,13 @@ namespace scan {
         mt19937 mt(seed);
         minstd_rand minstd(seed);
 
+        PolyaGammaHybridDouble pg(seed);
+
+        double polya_gamma(int n, double z) {
+            // polya-gamma distribution
+            // https://proceedings.neurips.cc/paper/2015/file/07a4e20a7bbeeb7a736682b26b16ebe8-Paper.pdf
+            return pg.draw(n, z);
+        }
         double gamma(double a, double b) {
             gamma_distribution<double> distribution(a, 1.0 / b);
             return distribution(mt);
