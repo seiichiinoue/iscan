@@ -373,13 +373,8 @@ public:
         vector<int> nx(_scan->_n_k-1, 0);
         int cnt = 0;
         for (int k=0; k<_scan->_n_k-1; ++k) {
-            if (k == 0) {
-                nx[k] = sum_cnt_t;
-                cnt += cnt_t[k];
-            } else {
-                nx[k] = sum_cnt_t - cnt;
-                cnt += cnt_t[k];
-            }
+            nx[k] = sum_cnt_t - cnt;
+            cnt += cnt_t[k];
         }
         // sampling with polya-gamma sampler
         for (int k=0; k<_scan->_n_k-1; ++k) {
