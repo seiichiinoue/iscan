@@ -18,10 +18,10 @@ test:
 	$(CC) -O3 $(STD) -o test train.cpp $(BOOST) $(INCLUDE) $(PGINCLUDE) $(PGLIB) $(FMATH) $(GSL) $(GFLAGS) 
 
 prob:
-	$(CC) -O3 $(STD) -o prob scripts/prob.cpp $(BOOST) $(INCLUDE) $(FMATH) $(GFLAGS)
+	$(CC) -O3 $(STD) -o prob scripts/prob.cpp $(BOOST) $(INCLUDE) $(PGINCLUDE) $(PGLIB) $(FMATH) $(GSL) $(GFLAGS) 
 
 infer:
-	$(CC) -O3 $(STD) -o infer scripts/infer.cpp $(BOOST) $(INCLUDE) $(FMATH) $(GFLAGS)
+	$(CC) -O3 $(STD) -o infer scripts/infer.cpp $(BOOST) $(INCLUDE) $(PGINCLUDE) $(PGLIB) $(FMATH) $(GSL) $(GFLAGS) 
 
 clean:
 	rm -f scan test prob infer
