@@ -31,4 +31,7 @@ namespace scan {
             return vmax + std::log(std::exp(vmin - vmax) + 1.0);
         }
     }
+    double logistic(double x) {
+        return 1.0 / (1.0 + std::exp(-x));
+    }
 }
