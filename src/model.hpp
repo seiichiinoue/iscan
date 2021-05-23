@@ -236,13 +236,15 @@ public:
             _probs[k] = 0.0;
         }
     }
-    void prepare() {
+    void prepare(bool mle=false) {
         int num_time = ((_end_year - _start_year) + (_year_interval - 1)) / _year_interval;
         int vocab_size = _vocab->num_words();
         int num_docs = _dataset.size();
         _scan->initialize_cache(num_time, vocab_size, num_docs);
         // initialize parameters $\phi$ and $\psi$ with MLE
-        // _initialize_parameters();
+        if (mle) {
+            _initialize_parameters();
+        }
         // after initializing $\phi$ and $\psi$, initialize trainer's chache
         initialize_cache();
     }
