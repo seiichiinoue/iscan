@@ -223,7 +223,7 @@ public:
 
         for (int t=0; t<_scan->_n_t; ++t) {
             _logistic_Phi[t] = new double[_scan->_n_k];
-            _logistic_transformation(t, _logistic_Phi[t]);
+            _stick_breaking_transformation(t, _logistic_Phi[t]);
         }
         for (int t=0; t<_scan->_n_t; ++t) {
             _logistic_Psi[t] = new double*[_scan->_n_k];
@@ -368,27 +368,24 @@ public:
             cnt_t[_scan->_Z[n]]++;
             sum_cnt_t++;
         }
-        double denom = 0.0;
-        for (int k=0; k<_scan->_n_k; ++k) {
-            denom += exp(phi_t[k]);
+        vector<int> nx(_scan->_n_k-1, 0);
+        int cnt = 0;
+        for (int k=0; k<_scan->_n_k-1; ++k) {
+            if (k == 0) {
+                nx[k] = sum_cnt_t;
+                cnt += cnt_t[k];
+            } else {
+                nx[k] = sum_cnt_t - cnt;
+                cnt += cnt_t[k];
+            }
         }
-        for (int k=0; k<_scan->_n_k; ++k) {
-            double constants = denom - exp(phi_t[k]);
-            int cnt = cnt_t[k];
-            int cnt_else = sum_cnt_t - cnt_t[k];
-            double lu, ru;
-            // random sampling of maximum value in $log(u_n / (1 - u_n))$, where $u_n \sim U(0, logistic_phi_t[k])$ 
-            lu = std::pow(sampler::uniform(0, 1), 1.0 / (double)cnt) * logistic_phi_t[k];
-            lu = log(constants) + log(lu) - log(1.0 - lu);
-            // random sampling of minimum value in $log(u_n / (1 - u_n))$, where $u_n \sim U(logistic_phi_t[k], 1)$
-            ru = (1.0 - logistic_phi_t[k]) * (1.0 - std::pow(sampler::uniform(0, 1), 1.0 / (double)cnt_else)) + logistic_phi_t[k];
-            ru = log(constants) + log(ru) - log(1.0 - ru);
-            // scaling probabilistic variable to standard normal
-            lu = (lu - _prior_mean_phi[k]) / prior_sigma;
-            ru = (ru - _prior_mean_phi[k]) / prior_sigma;
-            assert(lu < ru);
-            double noise = sampler::truncated_normal(lu, ru);
-            double sampled = _prior_mean_phi[k] + noise * prior_sigma;
+        // sampling with polya-gamma sampler
+        for (int k=0; k<_scan->_n_k-1; ++k) {
+            double omega_k = sampler::polya_gamma(nx[k], phi_t[k]);
+            double sigma_k_tilde = (double)(1.0) / (omega_k + prior_sigma);
+            double mu_k_tilde = (cnt_t[k] - (nx[k] / (double)(2.0))) + (_prior_mean_phi[k] * prior_sigma) * sigma_k_tilde;
+            double noise = sampler::normal();
+            double sampled = mu_k_tilde + noise * sigma_k_tilde;
             _scan->_Phi[t][k] = sampled;
         }
         // sanity check
@@ -478,7 +475,7 @@ public:
     void sample_kappa() {
         double a = _scan->_gamma_a + (double)(_scan->_n_k * _scan->_n_t) * 0.5;
         double b = 0.0;
-        for (int k=0; k<_scan->_n_k; ++k) {
+        for (int k=0; k<_scan->_n_k-1; ++k) {
             double mu_phi = 0.0;
             for (int t=0; t<_scan->_n_t; ++t) {
                 mu_phi += _scan->_Phi[t][k];
@@ -501,7 +498,7 @@ public:
     }
     void _update_logistic_Phi() {
         for (int t=0; t<_scan->_n_t; ++t) {
-            _logistic_transformation(t, _logistic_Phi[t]);
+            _stick_breaking_transformation(t, _logistic_Phi[t]);
         }
     }
     void _update_logistic_Psi() {
@@ -535,6 +532,15 @@ public:
         for (int v=0; v<_scan->_vocab_size; ++v) {
             vec[v] = exp(psi_t_k[v] - u);
         }
+    }
+    void _stick_breaking_transformation(int t, double* vec) {
+        double* phi_t = _scan->_Phi[t];
+        double stick = 1.0;
+        for (int k=0; k<_scan->_n_k-1; ++k) {
+            vec[k] = logistic(phi_t[k]) * stick;
+            stick -= vec[k];
+        }
+        vec[_scan->_n_k-1] = stick;
     }
     double compute_log_likelihood() {
         _update_logistic_Psi();
