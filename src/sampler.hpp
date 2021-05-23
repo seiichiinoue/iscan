@@ -45,6 +45,10 @@ namespace scan {
             uniform_int_distribution<> rand(min, max);
             return rand(mt);
         }
+        double normal() {
+            normal_distribution<double> standard_normal_distribution(0, 1);
+            return standard_normal_distribution(minstd);
+        }
         double _normal_cdf(double x) {
             return 0.5 * erfc(-x * std::sqrt(0.5));
         }
