@@ -34,7 +34,7 @@ std::vector<std::pair<wstring, double>> marginal_word_ranking(SCANTrainer &train
             if (trainer._word_frequency[v] < trainer._ignore_word_count) {
                 continue;
             }
-            id_prob[v] += trainer._logistic_Psi[t][k][v];
+            id_prob[v] += trainer._logistic_Psi[t][k][v] * trainer._logistic_Phi[t][k];
         }
     }
     for (int v=0; v<trainer._scan->_vocab_size; ++v) {
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
             wcout << endl;
         }
     }
-    wcout << "p(w|k) = sum_t p(w|t,k):" << endl;
+    wcout << "p(w|k) = sum_t p(w|k) p(k|t):" << endl;
     for (int k=0; k<trainer._scan->_n_k; ++k) {
         std::vector<std::pair<wstring, double>> mpw = marginal_word_ranking(trainer, k);
         for (int i=0; i<10; ++i) {
