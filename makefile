@@ -12,7 +12,7 @@ PGINCLUDE = -I./src/pg/ -I./src/pg/include/
 PGLIB = -lm src/pg/InvertY.cpp src/pg/PolyaGamma.cpp src/pg/PolyaGammaAlt.cpp src/pg/PolyaGammaSP.cpp src/pg/PolyaGammaSmallB.cpp src/pg/include/RNG.cpp src/pg/include/GRNG.cpp
 
 scan:
-	$(CC) -O3 $(STD) -o scan train.cpp $(BOOST) $(INCLUDE) $(FMATH) $(GFLAGS)
+	$(CC) -O3 $(STD) -o scan train.cpp $(BOOST) $(INCLUDE) $(PGINCLUDE) $(PGLIB) $(FMATH) $(GSL) $(GFLAGS) 
 
 test:
 	$(CC) -O3 $(STD) -o test train.cpp $(BOOST) $(INCLUDE) $(PGINCLUDE) $(PGLIB) $(FMATH) $(GSL) $(GFLAGS) 
