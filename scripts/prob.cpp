@@ -42,6 +42,13 @@ std::vector<double> sense_probability(SCANTrainer &trainer, int t) {
     }
     return ps;
 }
+std::vector<double> sense_gaussian(SCANTrainer &trainer, int t) {
+    std::vector<double> ps;
+    for (int k=0; k<trainer._scan->_n_k; ++k) {
+        ps.push_back(trainer._scan->_Phi[t][k]);
+    }
+    return ps;
+}
 std::vector<std::pair<wstring, double>> marginal_word_ranking(SCANTrainer &trainer, int k) {
     std::unordered_map<int, double> id_prob;
     std::vector<std::pair<wstring, double>> pw;
@@ -94,7 +101,8 @@ std::vector<std::pair<wstring, double>> npmi_marginal_word_ranking(SCANTrainer &
 }
 
 DEFINE_string(model_path, "./bin/transport.model", "path to model archive");
-DEFINE_bool(use_npmi, true, "use npmi or not.");
+DEFINE_bool(use_npmi, true, "use normalized pmi or not");
+DEFINE_bool(normalize, true, "show lsb-normalized value or gaussian variable");
 
 int main(int argc, char *argv[]) {
     google::InitGoogleLogging(*argv);
@@ -109,7 +117,12 @@ int main(int argc, char *argv[]) {
     // for each t, k, visualize word and sense distribution
     for (int t=0; t<trainer._scan->_n_t; ++t) {
         wcout << "time:" << t << endl;
-        std::vector<double> ps = sense_probability(trainer, t);
+        std::vector<double> ps;
+        if (FLAGS_normalize) {
+            ps = sense_probability(trainer, t);
+        } else {
+            ps = sense_gaussian(trainer, t);
+        }
         for (int k=0; k<trainer._scan->_n_k; ++k) {
             wcout << ps[k] << " ";
             std::vector<std::pair<wstring, double>> pw;
@@ -124,7 +137,7 @@ int main(int argc, char *argv[]) {
             wcout << endl;
         }
     }
-    wcout << "p(w|k) = sum_t p(w|k) p(k|t):" << endl;
+    wcout << "representative:" << endl;
     for (int k=0; k<trainer._scan->_n_k; ++k) {
         std::vector<std::pair<wstring, double>> mpw;
         if (FLAGS_use_npmi) {
