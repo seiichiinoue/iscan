@@ -242,7 +242,7 @@ public:
         int num_docs = _dataset.size();
         _scan->initialize_cache(num_time, vocab_size, num_docs);
         // initialize parameters $\phi$ and $\psi$ with MLE
-        _initialize_parameters();
+        // _initialize_parameters();
         // after initializing $\phi$ and $\psi$, initialize trainer's chache
         initialize_cache();
     }
@@ -383,7 +383,7 @@ public:
         for (int k=0; k<_scan->_n_k-1; ++k) {
             double omega_k = sampler::polya_gamma(nx[k], phi_t[k]);
             double sigma_k_tilde = (double)(1.0) / (omega_k + ((double)(1.0) / prior_sigma));
-            double mu_k_tilde = (cnt_t[k] - (nx[k] / (double)(2.0))) + (_prior_mean_phi[k] / prior_sigma) * sigma_k_tilde;
+            double mu_k_tilde = ((cnt_t[k] - (nx[k] / (double)(2.0))) + (_prior_mean_phi[k] / prior_sigma)) * sigma_k_tilde;
             double noise = sampler::normal();
             double sampled = mu_k_tilde + noise * sigma_k_tilde;
             _scan->_Phi[t][k] = sampled;
