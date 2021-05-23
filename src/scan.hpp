@@ -34,8 +34,6 @@ namespace scan {
         double** _Phi;
         double*** _Psi;
 
-        normal_distribution<double> _standard_normal_distribution;
-
         SCAN() {
             _n_k = NUM_SENSE;
             _n_t = NUM_TIME;
@@ -51,8 +49,6 @@ namespace scan {
             _Z = NULL;
             _Phi = NULL;
             _Psi = NULL;
-            
-            _standard_normal_distribution = normal_distribution<double>(0, 1);
         }
         ~SCAN() {
             if (_Z != NULL) {
@@ -92,7 +88,7 @@ namespace scan {
             for (int t=0; t<_n_t; ++t) {
                 _Phi[t] = new double[_n_k];
                 for (int k=0; k<_n_k; ++k) {
-                    _Phi[t][k] = 0.0;
+                    _Phi[t][k] = generate_noise_from_normal_distribution();
                 }
             }
             for (int t=0; t<_n_t; ++t) {
@@ -100,13 +96,13 @@ namespace scan {
                 for (int k=0; k<_n_k; ++k) {
                     _Psi[t][k] = new double[_vocab_size];
                     for (int v=0; v<_vocab_size; ++v) {
-                        _Psi[t][k][v] = 0.0;
+                        _Psi[t][k][v] = generate_noise_from_normal_distribution();
                     }
                 }
             }
         }
         double generate_noise_from_normal_distribution() {
-            return _standard_normal_distribution(sampler::minstd);
+            return sampler::normal();
         }
         template<class Archive>
         void serialize(Archive &archive, unsigned int version) {
