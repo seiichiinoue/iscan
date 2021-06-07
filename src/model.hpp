@@ -470,7 +470,7 @@ public:
         return;
     }
     void sample_kappa() {
-        double a = _scan->_gamma_a + (double)(_scan->_n_k * _scan->_n_t) * 0.5;
+        double a = _scan->_gamma_a + (double)((_scan->_n_k - 1) * _scan->_n_t) * 0.5;
         double b = 0.0;
         for (int k=0; k<_scan->_n_k-1; ++k) {
             double mu_phi = 0.0;
