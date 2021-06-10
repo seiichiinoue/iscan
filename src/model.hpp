@@ -198,7 +198,7 @@ public:
                 int sum_cnt_t_k = 0;
                 for (int n=0; n<_scan->_num_docs; ++n) {
                     if (_times[n] != t || _scan->_Z[n] != k) continue;
-                    for (int i=0; i<_scan->_context_window_width; ++i) {
+                    for (int i=0; i<_dataset[n].size(); ++i) {
                         size_t word_id = _dataset[n][i];
                         if (_word_frequency[word_id] < _ignore_word_count) {
                             continue;
@@ -316,7 +316,7 @@ public:
             }
             // calculation for $\prod \psi^{t, k}_wi$
             for (int k=0; k<_scan->_n_k; ++k) {
-                for (int i=0; i<_scan->_context_window_width; ++i) {
+                for (int i=0; i<_dataset[n].size(); ++i) {
                     size_t word_id = _dataset[n][i];
                     if (_word_frequency[word_id] < _ignore_word_count) {
                         continue;
@@ -421,7 +421,7 @@ public:
             int sum_cnt_t_k = 0;
             for (int n=0; n<_scan->_num_docs; ++n) {
                 if (_times[n] != t || _scan->_Z[n] != k) continue;
-                for (int i=0; i<_scan->_context_window_width; ++i) {
+                for (int i=0; i<_dataset[n].size(); ++i) {
                     size_t word_id = _dataset[n][i];
                     if (_word_frequency[word_id] < _ignore_word_count) {
                         continue;
@@ -546,7 +546,7 @@ public:
             for (int n=0; n<_scan->_num_docs; ++n) {
                 if (_times[n] != t) continue;
                 int assigned_sense = _scan->_Z[n];
-                for (int i=0; i<_scan->_context_window_width; ++i) {
+                for (int i=0; i<_dataset[n].size(); ++i) {
                     size_t word_id = _dataset[n][i];
                     if (_word_frequency[word_id] < _ignore_word_count) {
                         continue;
