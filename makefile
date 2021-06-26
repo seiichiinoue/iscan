@@ -20,6 +20,9 @@ test:
 prob:
 	$(CC) -O3 $(STD) -o prob scripts/prob.cpp $(BOOST) $(INCLUDE) $(PGINCLUDE) $(PGLIB) $(FMATH) $(GSL) $(GFLAGS) 
 
+eval:
+	$(CC) -O3 $(STD) -o eval scripts/eval.cpp $(BOOST) $(INCLUDE) $(PGINCLUDE) $(PGLIB) $(FMATH) $(GSL) $(GFLAGS) 
+
 infer:
 	$(CC) -O3 $(STD) -o infer scripts/infer.cpp $(BOOST) $(INCLUDE) $(PGINCLUDE) $(PGLIB) $(FMATH) $(GSL) $(GFLAGS) 
 

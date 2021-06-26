@@ -8,6 +8,7 @@ scan
 test
 infer
 prob
+eval
 # work files
 scripts/fig/
 scripts/*.py
