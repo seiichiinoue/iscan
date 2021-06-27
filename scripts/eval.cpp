@@ -19,7 +19,25 @@ std::vector<std::pair<wstring, double>> word_ranking(SCANTrainer &trainer, int t
     sort(pw.begin(), pw.end(), compare_by_b);
     return pw;
 }
-// calculate coherence with u_mass way
+std::vector<double> sense_probability(SCANTrainer &trainer, int t) {
+    std::vector<double> ps;
+    for (int k=0; k<trainer._scan->_n_k; ++k) {
+        ps.push_back(trainer._logistic_Phi[t][k]);
+    }
+    return ps;
+}
+// find 99% bound of sense
+int sense_bound(SCANTrainer &trainer, int t) {
+    std::vector<double> sense_prob = sense_probability(trainer, t);
+    double s = 0.0;
+    for (int k=0; k<trainer._scan->_n_k; ++k) {
+        s += sense_prob[k];
+        if (s >= 0.99) {
+            return k + 1;
+        }
+    }
+}
+// calculate coherence with u_mass measure
 int document_frequency(SCANTrainer &trainer, size_t wi) {
     int cnt = 0;
     for (int doc_id=0; doc_id<trainer._scan->_num_docs; ++doc_id) {
@@ -55,6 +73,35 @@ int bigram_document_grequency(SCANTrainer &trainer, size_t wi, size_t wj) {
 double coherence(SCANTrainer &trainer) {
     double score = 0.0;
     for (int t=0; t<trainer._scan->_n_t; ++t) {
+        int bound = sense_bound(trainer, t);
+        for (int k=0; k<bound; ++k) {
+            std::vector<std::pair<wstring, double>> top10 = word_ranking(trainer, t, k);
+            double tmp = 0.0;
+            for (int i=0; i<10; ++i) {
+                int wi = trainer._vocab->get_word_id(top10[i].first);
+                int freq_i = document_frequency(trainer, wi);
+                for (int j=i+1; j<10; ++j) {
+                    size_t wj = trainer._vocab->get_word_id(top10[j].first);
+                    int freq_j = document_frequency(trainer, wj);
+                    int freq_ij = bigram_document_grequency(trainer, wi, wj);
+                    double f_ij;
+                    if (freq_ij == 0) {
+                        f_ij = -1;
+                    } else {
+                        f_ij = -1 + (log(freq_i) + log(freq_j) - 2.0 * log(trainer._scan->_num_docs)) / (log(freq_ij) - log(trainer._scan->_num_docs));
+                    }
+                    tmp += f_ij;
+                }
+            }
+            score += (1.0 / (double)bound) * (tmp / 45.0);
+        }
+    }
+    return score / (double)(trainer._scan->_n_t);
+}
+double coherence_weighted(SCANTrainer &trainer) {
+    double score = 0.0;
+    for (int t=0; t<trainer._scan->_n_t; ++t) {
+        std::vector<double> sense_prob = sense_probability(trainer, t);
         for (int k=0; k<trainer._scan->_n_k; ++k) {
             std::vector<std::pair<wstring, double>> top10 = word_ranking(trainer, t, k);
             double tmp = 0.0;
@@ -74,10 +121,10 @@ double coherence(SCANTrainer &trainer) {
                     tmp += f_ij;
                 }
             }
-            score += tmp / 45.0;
+            score += sense_prob[k] * (tmp / 45.0);
         }
     }
-    return score / (trainer._scan->_n_t * trainer._scan->_n_k);
+    return score / (double)(trainer._scan->_n_t);
 }
 
 DEFINE_string(model_path, "./bin/transport.model", "path to model archive");
