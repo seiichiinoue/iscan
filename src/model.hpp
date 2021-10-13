@@ -263,6 +263,9 @@ public:
     void set_gamma_b(double gamma_b) {
         _scan->_gamma_b = gamma_b;
     }
+    void set_scaling_coeff(double scaling_coeff) {
+        _scan->_scaling_coeff = scaling_coeff;
+    }
     void set_context_window_width(int context_window_width) {
         _scan->_context_window_width = context_window_width;
     }
@@ -486,6 +489,20 @@ public:
         _scan->_kappa_phi = sampler::gamma(a, b);
         return;
     }
+    void sample_scaling_coeff() {
+        // use Metropolis-Hastings
+        // sample candidate of scaling_coeff from normal distribution
+
+        // exponentiation
+
+        // scale phi
+        
+        // compute log-likelihood
+
+        // if accept; update scaling_coeff parameter
+
+        // else; exit
+    }
     bool _word_in_document(size_t word_id, int doc_id) {
         vector<size_t>& tar_doc = _dataset[doc_id];
         for (int i=0; i<tar_doc.size(); ++i) {
@@ -534,7 +551,7 @@ public:
         double* phi_t = _scan->_Phi[t];
         double stick = 1.0;
         for (int k=0; k<_scan->_n_k-1; ++k) {
-            vec[k] = logistic(phi_t[k]) * stick;
+            vec[k] = logistic(phi_t[k] * _scan->_scaling_coeff) * stick;
             stick -= vec[k];
         }
         vec[_scan->_n_k-1] = stick;

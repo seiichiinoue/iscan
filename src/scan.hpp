@@ -33,6 +33,7 @@ namespace scan {
         int* _Z;
         double** _Phi;
         double*** _Psi;
+        double _scaling_coeff;
 
         SCAN() {
             _n_k = NUM_SENSE;
@@ -49,6 +50,7 @@ namespace scan {
             _Z = NULL;
             _Phi = NULL;
             _Psi = NULL;
+            _scaling_coeff = SCALING_COEFF;
         }
         ~SCAN() {
             if (_Z != NULL) {

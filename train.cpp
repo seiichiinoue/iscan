@@ -6,6 +6,7 @@ DEFINE_double(kappa_phi, 4.0, "initial value of kappa_phi");
 DEFINE_double(kappa_psi, 10.0, "initial value of kappa_psi (fixed)");
 DEFINE_double(gamma_a, 7.0, "hyperparameter of gamma prior");
 DEFINE_double(gamma_b, 3.0, "hyperparameter of gamma prior");
+DEFINE_double(scaling_coeff, 1.0, "concentration parameter of LSBP");
 DEFINE_int32(start_year, 1700, "start year in the corpus");
 DEFINE_int32(end_year, 2020, "end year in the corpus");
 DEFINE_int32(year_interval, 20, "year interval");
@@ -28,6 +29,7 @@ int main(int argc, char *argv[]) {
     trainer.set_kappa_psi(FLAGS_kappa_psi);
     trainer.set_gamma_a(FLAGS_gamma_a);
     trainer.set_gamma_b(FLAGS_gamma_b);
+    trainer.set_scaling_coeff(FLAGS_scaling_coeff);
     trainer.set_start_year(FLAGS_start_year);
     trainer.set_end_year(FLAGS_end_year);
     trainer.set_year_interval(FLAGS_year_interval);
@@ -48,6 +50,7 @@ int main(int argc, char *argv[]) {
     cout << "{num_sense: " << trainer._scan->_n_k << ", num_time: " << trainer._scan->_n_t
         << ", kappa_phi: " << trainer._scan->_kappa_phi << ", kappa_psi: " << trainer._scan->_kappa_psi
         << ", gamma_a: " << trainer._scan->_gamma_a << ", gamma_b: " << trainer._scan->_gamma_b
+        << ", scaling_coeff: " << trainer._scan->_scaling_coeff
         << ", context_window_width: " << trainer._scan->_context_window_width
         << ", num_iteration: " << FLAGS_num_iteration
         << ", burn_in_period: " << FLAGS_burn_in_period
