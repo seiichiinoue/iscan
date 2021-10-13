@@ -139,6 +139,7 @@ template<class Archive>
         archive & scan._num_docs;
         archive & scan._kappa_phi;
         archive & scan._kappa_psi;
+        archive & scan._scaling_coeff;
         for (int n=0; n<scan._num_docs; ++n) {
             archive & scan._Z[n];
         }
@@ -166,6 +167,7 @@ template<class Archive>
         archive & scan._num_docs;
         archive & scan._kappa_phi;
         archive & scan._kappa_psi;
+        archive & scan._scaling_coeff;
         if (scan._Z == NULL) {
             scan._Z = new int[scan._num_docs];
         }
