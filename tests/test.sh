@@ -10,16 +10,16 @@ SHIFT_TYPE="s-curve"
 
 # sb-scan
 NUM_ITERATION=5000
-SCALING_COEFF=1.0
+SCALING_COEFF=2.0
 SIGMA_COEFF=0.1
 
-DAY=1013
+DAY=$(date "+%m%d")
 INPUT_DATA=./tests/sampled/pseudo_sense${NUM_SENSES}_vocab${VOCAB_SIZE_PER_SENSE}_window${CONTEXT_WINDOW_SIZE}_sample${NUM_SAMPLE}.txt
 BINARY_PATH=./bin/pseudo_$DAY.model
 LOG_PATH=./log/out_pseudo_$DAY
 
 # generate pseudo data
-python3 tests/generate_sample.py --num-times $NUM_TIMES \
+python3 tests/sample_data.py --num-times $NUM_TIMES \
                            --num-senses $NUM_SENSES \
                            --context-window-size $CONTEXT_WINDOW_SIZE \
                            --vocab-size-per-sense $VOCAB_SIZE_PER_SENSE \
