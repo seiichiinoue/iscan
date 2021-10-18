@@ -92,6 +92,9 @@ public:
     int _kappa_phi_interval;
     int _kappa_phi_start;
     int _current_iter;
+
+    double _sigma_coeff;
+    normal_distribution<double> _noise_coeff;
     
     SCANTrainer() {
         setlocale(LC_CTYPE, "ja_JP.UTF-8");
@@ -109,6 +112,8 @@ public:
         _probs = NULL;
         _prior_mean_phi = NULL;
         _prior_mean_psi = NULL;
+
+        _sigma_coeff = SIGMA_COEFF;
 
         _start_year = START_YEAR;
         _end_year = END_YEAR;
@@ -247,6 +252,8 @@ public:
         }
         // after initializing $\phi$ and $\psi$, initialize trainer's chache
         initialize_cache();
+        // initialize gaussian sampler for MH sampling
+        _noise_coeff = normal_distribution<double>(0, _sigma_coeff);
     }
     void set_num_sense(int n_k) {
         _scan->_n_k = n_k;
@@ -265,6 +272,9 @@ public:
     }
     void set_scaling_coeff(double scaling_coeff) {
         _scan->_scaling_coeff = scaling_coeff;
+    }
+    void set_sigma_coeff(double sigma_coeff) {
+        _sigma_coeff = sigma_coeff;
     }
     void set_context_window_width(int context_window_width) {
         _scan->_context_window_width = context_window_width;
@@ -489,19 +499,28 @@ public:
         _scan->_kappa_phi = sampler::gamma(a, b);
         return;
     }
-    void sample_scaling_coeff() {
-        // use Metropolis-Hastings
-        // sample candidate of scaling_coeff from normal distribution
-
-        // exponentiation
-
-        // scale phi
-        
-        // compute log-likelihood
-
+    bool sample_scaling_coeff() {
+        double scaling_coeff_old = _scan->_scaling_coeff;
+        double z = _noise_coeff(sampler::minstd);
+        double scaling_coeff_new = scaling_coeff_old * exp(z);
+        // compute log-likelihood for scaling_coeff_old
+        double log_pw_old = compute_log_likelihood();
+        // set new sampled parameter
+        _scan->_scaling_coeff = scaling_coeff_new;
+        // compute log-likelihood for scaling_coeff_new
+        double log_pw_new = compute_log_likelihood();
         // if accept; update scaling_coeff parameter
-
-        // else; exit
+        double log_acceptance_rate = log_pw_new - log_pw_old;
+        double acceptance_ratio = std::min(1.0, exp(log_acceptance_rate));
+        double bernoulli = sampler::uniform(0, 1);
+        if (bernoulli <= acceptance_ratio) {
+            cout << "accepted; scaling_coeff: " << _scan->_scaling_coeff << endl;
+            return true;
+        }
+        // else; undo
+        _scan->_scaling_coeff = scaling_coeff_old;
+        _update_logistic_Phi();
+        return false;
     }
     bool _word_in_document(size_t word_id, int doc_id) {
         vector<size_t>& tar_doc = _dataset[doc_id];
@@ -557,19 +576,25 @@ public:
         vec[_scan->_n_k-1] = stick;
     }
     double compute_log_likelihood() {
+        _update_logistic_Phi();
         _update_logistic_Psi();
         double log_pw = 0.0;
         for (int t=0; t<_scan->_n_t; ++t) {
             for (int n=0; n<_scan->_num_docs; ++n) {
+                double log_pw_d = 0.0;
                 if (_times[n] != t) continue;
-                int assigned_sense = _scan->_Z[n];
-                for (int i=0; i<_dataset[n].size(); ++i) {
-                    size_t word_id = _dataset[n][i];
-                    if (_word_frequency[word_id] < _ignore_word_count) {
-                        continue;
+                for (int k=0; k<_scan->_n_k-1; ++k) {
+                    double log_pw_dk = log(_logistic_Phi[t][k]);
+                    for (int i=0; i<_dataset[n].size(); ++i) {
+                        size_t word_id = _dataset[n][i];
+                        if (_word_frequency[word_id] < _ignore_word_count) {
+                            continue;
+                        }
+                        log_pw_dk += log(_logistic_Psi[t][k][word_id]);
                     }
-                    log_pw += log(_logistic_Psi[t][assigned_sense][word_id]);
+                    log_pw_d += exp(log_pw_dk);
                 }
+                log_pw += log(log_pw_d);
             }
         }
         return log_pw;
@@ -585,6 +610,7 @@ public:
             if (_current_iter > _kappa_phi_start && _current_iter % _kappa_phi_interval == 0) {
                 sample_kappa();
             }
+            sample_scaling_coeff();
             double log_pw = compute_log_likelihood();
             double ppl = exp((-1 * log_pw) / get_sum_word_frequency());
             cout << "iter: " << _current_iter 
@@ -607,6 +633,7 @@ public:
         oarchive << _burn_in_period;
         oarchive << _ignore_word_count;
         oarchive << _current_iter;
+        oarchive << _sigma_coeff;
     }
     bool load(string filename) {
         std::ifstream ifs(filename);
@@ -625,6 +652,7 @@ public:
             iarchive >> _burn_in_period;
             iarchive >> _ignore_word_count;
             iarchive >> _current_iter;
+            iarchive >> _sigma_coeff;
             return true;
         }
         return false;

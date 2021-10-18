@@ -7,6 +7,7 @@ DEFINE_double(kappa_psi, 10.0, "initial value of kappa_psi (fixed)");
 DEFINE_double(gamma_a, 7.0, "hyperparameter of gamma prior");
 DEFINE_double(gamma_b, 3.0, "hyperparameter of gamma prior");
 DEFINE_double(scaling_coeff, 1.0, "concentration parameter of LSBP");
+DEFINE_double(sigma_coeff, 0.1, "random walk width of MH sampling");
 DEFINE_int32(start_year, 1700, "start year in the corpus");
 DEFINE_int32(end_year, 2020, "end year in the corpus");
 DEFINE_int32(year_interval, 20, "year interval");
@@ -30,6 +31,7 @@ int main(int argc, char *argv[]) {
     trainer.set_gamma_a(FLAGS_gamma_a);
     trainer.set_gamma_b(FLAGS_gamma_b);
     trainer.set_scaling_coeff(FLAGS_scaling_coeff);
+    trainer.set_sigma_coeff(FLAGS_sigma_coeff);
     trainer.set_start_year(FLAGS_start_year);
     trainer.set_end_year(FLAGS_end_year);
     trainer.set_year_interval(FLAGS_year_interval);
