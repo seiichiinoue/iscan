@@ -9,9 +9,9 @@ NUM_SAMPLE=1000
 SHIFT_TYPE="s-curve"
 
 # sb-scan
-NUM_ITERATION=5000
-SCALING_COEFF=2.0
-SIGMA_COEFF=0.1
+NUM_ITERATION=1000
+SCALING_COEFF=1.0
+SIGMA_COEFF=0.01
 
 DAY=$(date "+%m%d")
 INPUT_DATA=./tests/sampled/pseudo_sense${NUM_SENSES}_vocab${VOCAB_SIZE_PER_SENSE}_window${CONTEXT_WINDOW_SIZE}_sample${NUM_SAMPLE}.txt
@@ -33,6 +33,7 @@ python3 tests/sample_data.py --num-times $NUM_TIMES \
        -context_window_width=$CONTEXT_WINDOW_SIZE \
        -scaling_coeff=$SCALING_COEFF \
        -sigma_coeff=$SIGMA_COEFF \
+       -kappa_psi=100.0 \
        -start_year=0 \
        -end_year=$NUM_TIMES \
        -year_interval=1 \
