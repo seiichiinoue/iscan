@@ -1,10 +1,13 @@
 from os import path
-import numpy as np
 import argparse
+import numpy as np
+import matplotlib.pyplot as plt
 
 PROJECT_TOP = "/workspace"
 OUTPUT_PREFIX = path.join(PROJECT_TOP, "tests/sampled")
 OUTPUT_PATH = path.join(OUTPUT_PREFIX, "pseudo_data.txt")
+
+np.random.seed(0)
 
 class Sense:
     def __init__(self):
@@ -18,7 +21,9 @@ class Sense:
         else:
             self.priors = [0 for _ in range(t - change_point + 1)] + self.priors[:-1]
 
-    def set_smoothed_probs(self, t: int = 16, change_point: int = 8, reverse: bool = False):
+    def set_smoothed_probs(self, t: int = 16,
+                           change_point: int = 8,
+                           reverse: bool = False):
         def f(x):
             return 1 / (1 + np.exp(-x))
         
@@ -29,7 +34,9 @@ class Sense:
         for i in range(t):
             self.priors.append(f(slices[i]))
 
-    def set_scurve_probs(self, t: int = 16, change_point: int = 8, reverse: bool = False):
+    def set_scurve_probs(self, t: int = 16,
+                         change_point: int = 8,
+                         reverse: bool = False):
         assert t > change_point
         slices = np.arange(-3, 3, 6/t)
         for i in range(t):
@@ -37,6 +44,27 @@ class Sense:
                 self.priors.append(-1 * slices[i])
             else:
                 self.priors.append(slices[i])
+
+    def set_random_curve_probs_with_gaussian_process(self, t: int = 16):
+        def mean_function(x):
+            return np.zeros_like(x)
+        
+        def covariance_function(x1, x2, s):
+            return np.exp(-((x1 - x2) ** 2) / (s ** 2))
+
+        def save_sampled_function(x, sample, save_path="./tests/fig/gp.png"):
+            plt.plot(x, sample)
+            plt.savefig(save_path)
+
+        x = np.linspace(0, t-1, t)
+        x1, x2 = np.meshgrid(x, x)
+        sigma = 5.0
+        m = mean_function(x)
+        gram_matrix = covariance_function(x1, x2, sigma)
+        sample = np.random.multivariate_normal(m, gram_matrix)
+        save_sampled_function(x, sample)
+        self.priors = sample.tolist()
+        
 
 class Sampler:
     def __init__(self,
@@ -59,6 +87,8 @@ class Sampler:
                 sense.set_scurve_probs(self.num_times, reverse=bool(i))
             elif shift_type == "smoothed":
                 sense.set_smoothed_probs(self.num_times, reverse=bool(i))
+            elif shift_type == "random":
+                sense.set_random_curve_probs_with_gaussian_process(self.num_times)
             self.senses.append(sense)
         xs = np.array([s.priors for s in self.senses]).T
         self.probs = np.array([self.softmax(x) for x in xs])
@@ -110,6 +140,17 @@ class Sampler:
                     f.write("{} {}\n".format(str(t), " ".join(snippet)))
 
 
+def plot(probs):
+    fig, ax = plt.subplots(figsize=(10, 6))
+    legend = []
+    for i in range(len(probs[0])):
+        ax.bar([str(j) for j in range(len(probs))], probs[:, i], bottom=probs[:, :i].sum(axis=1))
+        legend.append(f"sense_{str(i)}")
+    plt.legend(legend, loc='upper left', bbox_to_anchor=(0, -0.1),)
+    fig.tight_layout()
+    plt.savefig(f'tests/fig/gp_prob.png')
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--num-times', type=int, default=16)
@@ -132,4 +173,5 @@ if __name__ == "__main__":
         ratio_common_vocab=args.ratio_common_vocab,
         shift_type=args.shift_type
         )
+    plot(sampler.probs)
     sampler.draw_words(n_sample=args.num_sample)
