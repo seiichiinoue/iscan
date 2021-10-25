@@ -20,13 +20,13 @@ LOG_PATH=./log/out_pseudo_$DAY
 
 # generate pseudo data
 python3 tests/sample_data.py --num-times $NUM_TIMES \
-                           --num-senses $NUM_SENSES \
-                           --context-window-size $CONTEXT_WINDOW_SIZE \
-                           --vocab-size-per-sense $VOCAB_SIZE_PER_SENSE \
-                           --ratio-common-vocab $RATIO_COMMON_VOCAB \
-                           --num-sample $NUM_SAMPLE \
-                           --shift-type $SHIFT_TYPE \
-                           --output-path $INPUT_DATA
+                             --num-senses $NUM_SENSES \
+                             --context-window-size $CONTEXT_WINDOW_SIZE \
+                             --vocab-size-per-sense $VOCAB_SIZE_PER_SENSE \
+                             --ratio-common-vocab $RATIO_COMMON_VOCAB \
+                             --num-sample $NUM_SAMPLE \
+                             --shift-type $SHIFT_TYPE \
+                             --output-path $INPUT_DATA
 # execute test
 ./scan -data_path=$INPUT_DATA \
        -save_path=$BINARY_PATH \
