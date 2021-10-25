@@ -12,6 +12,8 @@ eval
 # work files
 scripts/fig/
 scripts/*.py
+tests/fig/
+tests/sampled/
 log/
 .work/
 .idea/
