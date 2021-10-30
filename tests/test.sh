@@ -1,7 +1,7 @@
 # parameters
 # sampler
 NUM_TIMES=16
-NUM_SENSES=3
+NUM_SENSES=5
 CONTEXT_WINDOW_SIZE=10
 VOCAB_SIZE_PER_SENSE=1000
 RATIO_COMMON_VOCAB=0.2
@@ -11,7 +11,7 @@ SHIFT_TYPE="random"
 # sb-scan
 NUM_ITERATION=1000
 SCALING_COEFF=1.0
-SIGMA_COEFF=0.01
+SIGMA_COEFF=0.05
 
 DAY=$(date "+%m%d")
 INPUT_DATA=./tests/sampled/pseudo_sense${NUM_SENSES}_vocab${VOCAB_SIZE_PER_SENSE}_window${CONTEXT_WINDOW_SIZE}_sample${NUM_SAMPLE}.txt
@@ -33,7 +33,7 @@ python3 tests/sample_data.py --num-times $NUM_TIMES \
        -context_window_width=$CONTEXT_WINDOW_SIZE \
        -scaling_coeff=$SCALING_COEFF \
        -sigma_coeff=$SIGMA_COEFF \
-       -kappa_psi=100.0 \
+       -kappa_psi=10.0 \
        -start_year=0 \
        -end_year=$NUM_TIMES \
        -year_interval=1 \
