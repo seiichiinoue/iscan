@@ -26,7 +26,7 @@ compile and train.
 
 ```
 $ make
-$ ./scan -num_iteration=1000 -burn_in_period=500 -ignore_word_count=3 -data_path=PATH_TO_DATA -save_path=PATH_TO_MODEL
+$ ./scan -num_iteration=1000 -ignore_word_count=3 -data_path=PATH_TO_DATA -save_path=PATH_TO_MODEL
 ```
 
 ## References
