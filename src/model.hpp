@@ -514,7 +514,6 @@ public:
         double acceptance_ratio = std::min(1.0, exp(log_acceptance_rate));
         double bernoulli = sampler::uniform(0, 1);
         if (bernoulli <= acceptance_ratio) {
-            cout << "accepted; scaling_coeff: " << _scan->_scaling_coeff << endl;
             return true;
         }
         // else; undo
@@ -615,7 +614,10 @@ public:
             double ppl = exp((-1 * log_pw) / get_sum_word_frequency());
             cout << "iter: " << _current_iter 
                 << " log_likelihood: " << log_pw
-                << " perplexity: " << ppl << endl;
+                << " perplexity: " << ppl 
+                << " kappa_phi: " << _scan->_kappa_phi
+                << " scaling_coeff: " << _scan->_scaling_coeff
+                << endl;
             save(save_path);
         }
     }
