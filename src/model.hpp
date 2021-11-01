@@ -362,27 +362,26 @@ public:
     void sample_phi(int t) {
         // sample phi under each time $t$
         _update_logistic_Phi();
-        double prior_sigma;
+        double prior_sigma2;
         double* phi_t = _scan->_Phi[t];
         double* logistic_phi_t = _logistic_Phi[t];
         if (t == 0) {
             for (int k=0; k<_scan->_n_k; ++k) {
                 _prior_mean_phi[k] = _scan->_Phi[t+1][k];
             }
-            prior_sigma = sqrt(1.0 / _scan->_kappa_phi);
+            prior_sigma2 = 1.0 / _scan->_kappa_phi;
         } else if (t+1 == _scan->_n_t) {
             for (int k=0; k<_scan->_n_k; ++k) {
                 _prior_mean_phi[k] = _scan->_Phi[t-1][k];
             }
-            prior_sigma = sqrt(1.0 / _scan->_kappa_phi);
+            prior_sigma2 = 1.0 / _scan->_kappa_phi;
         } else {
             for (int k=0; k<_scan->_n_k; ++k) {
                 _prior_mean_phi[k] = _scan->_Phi[t-1][k] + _scan->_Phi[t+1][k];
                 _prior_mean_phi[k] *= 0.5;
             }
-            prior_sigma = sqrt(1.0 / (2.0 * _scan->_kappa_phi));
+            prior_sigma2 = 1.0 / (2.0 * _scan->_kappa_phi);
         }
-        double prior_sigma2 = prior_sigma * prior_sigma;
         vector<int> cnt_t(_scan->_n_k, 0);
         int sum_cnt_t = 0;
         for (int n=0; n<_scan->_num_docs; ++n) {
