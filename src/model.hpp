@@ -270,6 +270,12 @@ public:
     void set_gamma_b(double gamma_b) {
         _scan->_gamma_b = gamma_b;
     }
+    void set_kappa_phi_start(int kappa_phi_start) {
+        _kappa_phi_start = kappa_phi_start;
+    }
+    void set_kappa_phi_interval(int kappa_phi_interval) {
+        _kappa_phi_interval = kappa_phi_interval;
+    }
     void set_scaling_coeff(double scaling_coeff) {
         _scan->_scaling_coeff = scaling_coeff;
     }
@@ -376,6 +382,7 @@ public:
             }
             prior_sigma = sqrt(1.0 / (2.0 * _scan->_kappa_phi));
         }
+        double prior_sigma2 = prior_sigma * prior_sigma;
         vector<int> cnt_t(_scan->_n_k, 0);
         int sum_cnt_t = 0;
         for (int n=0; n<_scan->_num_docs; ++n) {
@@ -392,10 +399,10 @@ public:
         // sampling with polya-gamma sampler
         for (int k=0; k<_scan->_n_k-1; ++k) {
             double omega_k = sampler::polya_gamma(nx[k], phi_t[k]);
-            double sigma_k_tilde = (double)(1.0) / (omega_k + ((double)(1.0) / prior_sigma));
-            double mu_k_tilde = ((cnt_t[k] - (nx[k] / (double)(2.0))) + (_prior_mean_phi[k] / prior_sigma)) * sigma_k_tilde;
+            double sigma2_k_tilde = (double)(1.0) / (omega_k + ((double)(1.0) / prior_sigma2));
+            double mu_k_tilde = ((cnt_t[k] - (nx[k] / (double)(2.0))) + (_prior_mean_phi[k] / prior_sigma2)) * sigma2_k_tilde;
             double noise = sampler::normal();
-            double sampled = mu_k_tilde + noise * sigma_k_tilde;
+            double sampled = mu_k_tilde + noise * sqrt(sigma2_k_tilde);
             _scan->_Phi[t][k] = sampled;
         }
         // sanity check
@@ -634,6 +641,8 @@ public:
         oarchive << _year_interval;
         oarchive << _burn_in_period;
         oarchive << _ignore_word_count;
+        oarchive << _kappa_phi_start;
+        oarchive << _kappa_phi_interval;
         oarchive << _current_iter;
         oarchive << _sigma_coeff;
     }
@@ -653,6 +662,8 @@ public:
             iarchive >> _year_interval;
             iarchive >> _burn_in_period;
             iarchive >> _ignore_word_count;
+            iarchive >> _kappa_phi_start;
+            iarchive >> _kappa_phi_interval;
             iarchive >> _current_iter;
             iarchive >> _sigma_coeff;
             return true;

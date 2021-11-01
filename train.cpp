@@ -6,6 +6,8 @@ DEFINE_double(kappa_phi, 4.0, "initial value of kappa_phi");
 DEFINE_double(kappa_psi, 10.0, "initial value of kappa_psi (fixed)");
 DEFINE_double(gamma_a, 7.0, "hyperparameter of gamma prior");
 DEFINE_double(gamma_b, 3.0, "hyperparameter of gamma prior");
+DEFINE_int32(kappa_phi_start, 100, "start point of kappa sampling");
+DEFINE_int32(kappa_phi_interval, 50, "interval of kappa sampling");
 DEFINE_double(scaling_coeff, 1.0, "concentration parameter of LSBP");
 DEFINE_double(sigma_coeff, 0.1, "random walk width of MH sampling");
 DEFINE_int32(start_year, 1700, "start year in the corpus");
@@ -30,6 +32,8 @@ int main(int argc, char *argv[]) {
     trainer.set_kappa_psi(FLAGS_kappa_psi);
     trainer.set_gamma_a(FLAGS_gamma_a);
     trainer.set_gamma_b(FLAGS_gamma_b);
+    trainer.set_kappa_phi_start(FLAGS_kappa_phi_start);
+    trainer.set_kappa_phi_interval(FLAGS_kappa_phi_interval);
     trainer.set_scaling_coeff(FLAGS_scaling_coeff);
     trainer.set_sigma_coeff(FLAGS_sigma_coeff);
     trainer.set_start_year(FLAGS_start_year);
