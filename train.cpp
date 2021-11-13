@@ -17,6 +17,7 @@ DEFINE_int32(context_window_width, 10, "context window width");
 DEFINE_int32(num_iteration, 1000, "number of iteration");
 DEFINE_int32(burn_in_period, 500, "burn in period");
 DEFINE_int32(ignore_word_count, 3, "threshold of low-frequency words");
+DEFINE_int32(min_snippet_length, 3, "threshold of size of snippet");
 DEFINE_string(data_path, "./data/transport/corpus.txt", "path to dataset for training");
 DEFINE_string(save_path, "./bin/scan.model", "path to model for archive");
 DEFINE_string(load_path, "./bin/scan.model", "path to model for loading");
@@ -42,6 +43,7 @@ int main(int argc, char *argv[]) {
     trainer.set_context_window_width(FLAGS_context_window_width);
     trainer.set_burn_in_period(FLAGS_burn_in_period);
     trainer.set_ignore_word_count(FLAGS_ignore_word_count);
+    trainer.set_min_snippet_length(FLAGS_min_snippet_length);
     // load dataset
     trainer.load_documents(FLAGS_data_path);
     // prepare model
@@ -60,7 +62,8 @@ int main(int argc, char *argv[]) {
         << ", context_window_width: " << trainer._scan->_context_window_width
         << ", num_iteration: " << FLAGS_num_iteration
         << ", burn_in_period: " << FLAGS_burn_in_period
-        << ", ignore_word_count: " << FLAGS_ignore_word_count << "}" << endl;
+        << ", ignore_word_count: " << FLAGS_ignore_word_count
+        << ", min_snippet_length: " << FLAGS_min_snippet_length << "}" << endl;
     cout << "num of docs: " << trainer._scan->_num_docs << endl;
     cout << "sum of word freq: " << trainer.get_sum_word_frequency() << endl;
     cout << "vocab size: " << trainer.get_vocab_size() << endl;

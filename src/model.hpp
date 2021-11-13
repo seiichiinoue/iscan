@@ -89,6 +89,7 @@ public:
 
     int _burn_in_period;
     int _ignore_word_count;
+    int _min_snippet_length;
     int _kappa_phi_interval;
     int _kappa_phi_start;
     int _current_iter;
@@ -121,6 +122,7 @@ public:
 
         _burn_in_period = BURN_IN_PERIOD;
         _ignore_word_count = IGNORE_WORD_COUNT;
+        _min_snippet_length = MIN_SNIPPET_LENGTH;
         _kappa_phi_start = KAPPA_PHI_START;
         _kappa_phi_interval = KAPPA_PHI_INTERVAL;
         _current_iter = 0;
@@ -165,10 +167,13 @@ public:
         assert(ifs.fail() == false);
         wstring sentence;
         while (getline(ifs, sentence) && !ifs.eof()) {
-            int doc_id = _dataset.size();
-            _dataset.push_back(vector<size_t>());
             vector<wstring> words;
             split_word_by(sentence, L' ', words);
+            if (words.size() - 1 < _min_snippet_length) {
+                continue;
+            }
+            int doc_id = _dataset.size();
+            _dataset.push_back(vector<size_t>());
             int time_id = year_to_id[stoi(words[0])];
             words.erase(words.begin());
             _add_document(words, doc_id);
@@ -299,6 +304,9 @@ public:
     }
     void set_ignore_word_count(int ignore_word_count) {
         _ignore_word_count = ignore_word_count;
+    }
+    void set_min_snippet_length(int min_snippet_length) {
+        _min_snippet_length = min_snippet_length;
     }
     int get_sum_word_frequency() {
         int sum = 0;
