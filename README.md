@@ -29,6 +29,14 @@ $ make
 $ ./scan -num_iteration=1000 -ignore_word_count=3 -data_path=PATH_TO_DATA -save_path=PATH_TO_MODEL
 ```
 
+## Estimation with pseudo data
+
+tun to generate pseudo data and train model.
+
+```
+$ sh tests/test.sh NUM_SENSES
+```
+
 ## References
 
 - [A Bayesian Model of Diachronic Meaning Change. (2016). L. Frermann and M. Lapata.](https://www.aclweb.org/anthology/Q16-1003.pdf)
