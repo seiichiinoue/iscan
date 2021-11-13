@@ -52,17 +52,12 @@ class Sense:
         def covariance_function(x1, x2, s):
             return np.exp(-((x1 - x2) ** 2) / (s ** 2))
 
-        def save_sampled_function(x, sample, save_path="./tests/fig/gp.png"):
-            plt.plot(x, sample)
-            plt.savefig(save_path)
-
         x = np.linspace(0, t-1, t)
         x1, x2 = np.meshgrid(x, x)
         sigma = 5.0
         m = mean_function(x)
         gram_matrix = covariance_function(x1, x2, sigma)
         sample = np.random.multivariate_normal(m, gram_matrix)
-        save_sampled_function(x, sample)
         self.priors = sample.tolist()
         
 
@@ -140,7 +135,13 @@ class Sampler:
                     f.write("{} {}\n".format(str(t), " ".join(snippet)))
 
 
-def plot(probs):
+def plot_curve(t, senses):
+    x = np.linspace(0, t-1, t)
+    for sense in senses:
+        plt.plot(x, sense.priors)
+    plt.savefig(f'tests/fig/gp_sense{str(len(senses))}.png')
+
+def plot_proportion(probs):
     fig, ax = plt.subplots(figsize=(10, 6))
     legend = []
     for i in range(len(probs[0])):
@@ -148,7 +149,7 @@ def plot(probs):
         legend.append(f"sense_{str(i)}")
     plt.legend(legend, loc='upper left', bbox_to_anchor=(0, -0.1),)
     fig.tight_layout()
-    plt.savefig(f'tests/fig/gp_prob.png')
+    plt.savefig(f'tests/fig/gp_prob_sense{str(len(probs[0]))}.png')
 
 
 if __name__ == "__main__":
@@ -173,5 +174,6 @@ if __name__ == "__main__":
         ratio_common_vocab=args.ratio_common_vocab,
         shift_type=args.shift_type
         )
-    plot(sampler.probs)
+    plot_curve(args.num_times, sampler.senses)
+    plot_proportion(sampler.probs)
     sampler.draw_words(n_sample=args.num_sample)
