@@ -49,14 +49,14 @@ class Sense:
         def mean_function(x):
             return np.zeros_like(x)
         
-        def covariance_function(x1, x2, s):
-            return np.exp(-((x1 - x2) ** 2) / (s ** 2))
+        def covariance_function(x1, x2, s1, s2):
+            return np.exp(-((x1 - x2) ** 2) / (s2 ** 2))
 
         x = np.linspace(0, t-1, t)
         x1, x2 = np.meshgrid(x, x)
-        sigma = 5.0
+        s1, s2 = 2.0, 5.0
         m = mean_function(x)
-        gram_matrix = covariance_function(x1, x2, sigma)
+        gram_matrix = covariance_function(x1, x2, s1, s2)
         sample = np.random.multivariate_normal(m, gram_matrix)
         self.priors = sample.tolist()
         
@@ -160,7 +160,7 @@ if __name__ == "__main__":
     parser.add_argument('--vocab-size-per-sense', type=int, default=10)
     parser.add_argument('--ratio-common-vocab', type=float, default=0.2)
     parser.add_argument('--num-sample', type=int, default=100)
-    parser.add_argument('--shift-type', type=str, default="s-curve")
+    parser.add_argument('--shift-type', type=str, default="random")
     parser.add_argument('--output-path', type=str, default="pseudo_data.txt")
     args = parser.parse_args()
 
