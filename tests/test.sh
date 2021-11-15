@@ -1,7 +1,7 @@
 # parameters
 # sampler
 NUM_TIMES=16
-NUM_SENSES=5
+NUM_SENSES=$1
 CONTEXT_WINDOW_SIZE=10
 VOCAB_SIZE_PER_SENSE=1000
 RATIO_COMMON_VOCAB=0.2
@@ -14,9 +14,9 @@ SCALING_COEFF=1.0
 SIGMA_COEFF=0.05
 
 DAY=$(date "+%m%d")
-INPUT_DATA=./tests/sampled/pseudo_sense${NUM_SENSES}_vocab${VOCAB_SIZE_PER_SENSE}_window${CONTEXT_WINDOW_SIZE}_sample${NUM_SAMPLE}.txt
-BINARY_PATH=./bin/pseudo_$DAY.model
-LOG_PATH=./log/out_pseudo_$DAY
+INPUT_DATA=./tests/sampled/pseudo_sense${NUM_SENSES}_vocab${VOCAB_SIZE_PER_SENSE}_common${RATIO_COMMON_VOCAB}_window${CONTEXT_WINDOW_SIZE}_sample${NUM_SAMPLE}.txt
+BINARY_PATH=./bin/pseudo_sense${NUM_SENSES}_${DAY}.model
+LOG_PATH=./log/out_pseudo_sense${NUM_SENSES}_${DAY}
 
 # generate pseudo data
 python3 tests/sample_data.py --num-times $NUM_TIMES \
@@ -40,4 +40,4 @@ python3 tests/sample_data.py --num-times $NUM_TIMES \
        -num_iteration=$NUM_ITERATION > $LOG_PATH
 
 # output probabilities
-./prob -model_path=$BINARY_PATH -use_npmi=false > scripts/out/pseudo_$DAY
+./prob -model_path=$BINARY_PATH -use_npmi=false > scripts/out/pseudo_sense${NUM_SENSES}_$DAY
