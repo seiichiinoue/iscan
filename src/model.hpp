@@ -622,8 +622,8 @@ public:
             }
             if (_current_iter > _kappa_phi_start && _current_iter % _kappa_phi_interval == 0) {
                 sample_kappa();
+                sample_scaling_coeff();
             }
-            sample_scaling_coeff();
             double log_pw = compute_log_likelihood();
             double ppl = exp((-1 * log_pw) / get_sum_word_frequency());
             cout << "iter: " << _current_iter 
