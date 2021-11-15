@@ -10,7 +10,7 @@
 #define GAMMA_B 3.0
 #define SCALING_COEFF 1.0
 #define MIN_SNIPPET_LENGTH 3
-#define SIGMA_COEFF 0.1
+#define SIGMA_COEFF 0.05
 #define CONTEXT_WINDOW_WIDTH 10
 #define START_YEAR 1810
 #define END_YEAR 2010
