@@ -10,7 +10,7 @@ bool compare_by_b(std::pair<wstring, double> a, std::pair<wstring, double> b) {
 std::vector<std::pair<wstring, double>> word_ranking(SCANTrainer &trainer, int t, int k) {
     std::vector<std::pair<wstring, double>> pw;
     for (int v=0; v<trainer._scan->_vocab_size; ++v) {
-        if (trainer._word_frequency[v] < trainer._ignore_word_count) {
+        if (trainer._word_frequency[v] < trainer._min_word_count) {
             continue;
         }
         wstring word = trainer._vocab->word_id_to_string(v);
@@ -23,7 +23,7 @@ std::vector<std::pair<wstring, double>> npmi_word_ranking(SCANTrainer &trainer, 
     std::vector<std::pair<wstring, double>> pw;
     int sum_word_frequency = trainer.get_sum_word_frequency();
     for (int v=0; v<trainer._scan->_vocab_size; ++v) {
-        if (trainer._word_frequency[v] < trainer._ignore_word_count) {
+        if (trainer._word_frequency[v] < trainer._min_word_count) {
             continue;
         }
         double ln_conditional_pw = log(trainer._logistic_Psi[t][k][v]);
@@ -54,14 +54,14 @@ std::vector<std::pair<wstring, double>> marginal_word_ranking(SCANTrainer &train
     std::vector<std::pair<wstring, double>> pw;
     for (int t=0; t<trainer._scan->_n_t; ++t) {
         for (int v=0; v<trainer._scan->_vocab_size; ++v) {
-            if (trainer._word_frequency[v] < trainer._ignore_word_count) {
+            if (trainer._word_frequency[v] < trainer._min_word_count) {
                 continue;
             }
             id_prob[v] += trainer._logistic_Psi[t][k][v];
         }
     }
     for (int v=0; v<trainer._scan->_vocab_size; ++v) {
-        if (trainer._word_frequency[v] < trainer._ignore_word_count) {
+        if (trainer._word_frequency[v] < trainer._min_word_count) {
             continue;
         }
         wstring word = trainer._vocab->word_id_to_string(v);
@@ -76,14 +76,14 @@ std::vector<std::pair<wstring, double>> npmi_marginal_word_ranking(SCANTrainer &
     int sum_word_frequency = trainer.get_sum_word_frequency();
     for (int t=0; t<trainer._scan->_n_t; ++t) {
         for (int v=0; v<trainer._scan->_vocab_size; ++v) {
-            if (trainer._word_frequency[v] < trainer._ignore_word_count) {
+            if (trainer._word_frequency[v] < trainer._min_word_count) {
                 continue;
             }
             id_prob[v] += trainer._logistic_Psi[t][k][v];
         }
     }
     for (int v=0; v<trainer._scan->_vocab_size; ++v) {
-        if (trainer._word_frequency[v] < trainer._ignore_word_count) {
+        if (trainer._word_frequency[v] < trainer._min_word_count) {
             continue;
         }
         double joint_pw = 0.0;
