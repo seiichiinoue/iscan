@@ -26,7 +26,7 @@ compile and train.
 
 ```
 $ make
-$ ./scan -num_iteration=1000 -ignore_word_count=3 -data_path=PATH_TO_DATA -save_path=PATH_TO_MODEL
+$ ./scan -num_iteration=1000 -top_n_word=1000 -data_path=PATH_TO_DATA -save_path=PATH_TO_MODEL
 ```
 
 ## Estimation with pseudo data
