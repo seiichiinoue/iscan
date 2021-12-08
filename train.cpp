@@ -16,6 +16,7 @@ DEFINE_int32(year_interval, 20, "year interval");
 DEFINE_int32(context_window_width, 10, "context window width");
 DEFINE_int32(num_iteration, 1000, "number of iteration");
 DEFINE_int32(burn_in_period, 500, "burn in period");
+DEFINE_int32(top_n_word, 1000, "threshold for vocabulary selection");
 DEFINE_int32(min_word_count, 10, "threshold of low-frequency words");
 DEFINE_int32(min_snippet_count, 1, "threshold for snippets size in the time point");
 DEFINE_int32(min_snippet_length, 1, "threshold of size of snippet");
@@ -44,6 +45,7 @@ int main(int argc, char *argv[]) {
     trainer.set_year_interval(FLAGS_year_interval);
     trainer.set_context_window_width(FLAGS_context_window_width);
     trainer.set_burn_in_period(FLAGS_burn_in_period);
+    trainer.set_top_n_word(FLAGS_top_n_word);
     trainer.set_min_word_count(FLAGS_min_word_count);
     trainer.set_min_snippet_count(FLAGS_min_snippet_count);
     trainer.set_min_snippet_length(FLAGS_min_snippet_length);
@@ -65,6 +67,7 @@ int main(int argc, char *argv[]) {
         << ", context_window_width: " << trainer._scan->_context_window_width
         << ", num_iteration: " << FLAGS_num_iteration
         << ", burn_in_period: " << FLAGS_burn_in_period
+        << ", top_n_word: " << FLAGS_top_n_word
         << ", min_word_count: " << FLAGS_min_word_count
         << ", min_snippet_count: " << FLAGS_min_snippet_count
         << ", min_snippet_length: " << FLAGS_min_snippet_length << "}" << endl;
