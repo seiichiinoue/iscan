@@ -46,7 +46,6 @@ int main(int argc, char *argv[]) {
     trainer.set_context_window_width(FLAGS_context_window_width);
     trainer.set_burn_in_period(FLAGS_burn_in_period);
     trainer.set_top_n_word(FLAGS_top_n_word);
-    trainer.set_min_word_count(FLAGS_min_word_count);
     trainer.set_min_snippet_count(FLAGS_min_snippet_count);
     trainer.set_min_snippet_length(FLAGS_min_snippet_length);
     // load dataset
@@ -68,7 +67,6 @@ int main(int argc, char *argv[]) {
         << ", num_iteration: " << FLAGS_num_iteration
         << ", burn_in_period: " << FLAGS_burn_in_period
         << ", top_n_word: " << FLAGS_top_n_word
-        << ", min_word_count: " << FLAGS_min_word_count
         << ", min_snippet_count: " << FLAGS_min_snippet_count
         << ", min_snippet_length: " << FLAGS_min_snippet_length << "}" << endl;
     cout << "num of docs: " << trainer._scan->_num_docs << endl;
