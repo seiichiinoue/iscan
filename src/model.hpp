@@ -29,6 +29,9 @@ struct multiset_comparator {
     }
 };
 
+bool compare(const pair<size_t, int> &a, const pair<size_t, int> &b) {
+    return a.second > b.second;
+}
 void split_string_by(const string &str, char delim, vector<string> &elems) {
     elems.clear();
     string item;
@@ -89,6 +92,7 @@ public:
     int _year_interval;
 
     int _burn_in_period;
+    int _top_n_word;
     int _min_word_count;
     int _min_snippet_count;
     int _min_snippet_length;
@@ -123,6 +127,7 @@ public:
         _year_interval = YEAR_INTERVAL;
 
         _burn_in_period = BURN_IN_PERIOD;
+        _top_n_word = TOP_N_WORD;
         _min_word_count = MIN_WORD_COUNT;
         _min_snippet_count = MIN_SNIPPET_COUNT;
         _min_snippet_length = MIN_SNIPPET_LENGTH;
@@ -228,6 +233,11 @@ public:
             }
         }
     }
+    void _compute_min_word_count() {
+        vector<pair<size_t, int>> ordered_vocab(_word_frequency.begin(), _word_frequency.end());
+        sort(ordered_vocab.begin(), ordered_vocab.end(), compare);
+        _min_word_count = ordered_vocab[_top_n_word-1].second;
+    }
     void initialize_cache() {
         _logistic_Phi = new double*[_scan->_n_t];
         _logistic_Psi = new double**[_scan->_n_t];
@@ -263,6 +273,8 @@ public:
         initialize_cache();
         // initialize gaussian sampler for MH sampling
         _noise_coeff = normal_distribution<double>(0, _sigma_coeff);
+        // compute min_word_count according to top_n_word
+        _compute_min_word_count();
     }
     void set_num_sense(int n_k) {
         _scan->_n_k = n_k;
@@ -305,6 +317,9 @@ public:
     }
     void set_burn_in_period(int burn_in_period) {
         _burn_in_period = burn_in_period;
+    }
+    void set_top_n_word(int top_n_word) {
+        _top_n_word = top_n_word;
     }
     void set_min_word_count(int min_word_count) {
         _min_word_count = min_word_count;
@@ -654,6 +669,7 @@ public:
         oarchive << _end_year;
         oarchive << _year_interval;
         oarchive << _burn_in_period;
+        oarchive << _top_n_word;
         oarchive << _min_word_count;
         oarchive << _min_snippet_count;
         oarchive << _min_snippet_length;
@@ -677,6 +693,7 @@ public:
             iarchive >> _end_year;
             iarchive >> _year_interval;
             iarchive >> _burn_in_period;
+            iarchive >> _top_n_word;
             iarchive >> _min_word_count;
             iarchive >> _min_snippet_count;
             iarchive >> _min_snippet_length;
