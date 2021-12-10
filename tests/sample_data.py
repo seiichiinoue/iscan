@@ -89,16 +89,16 @@ class Sampler:
         self.probs = np.array([self.softmax(x) for x in xs])
         self.vocab_size_per_sense = vocab_size_per_sense
         self.ratio_common_vocab = ratio_common_vocab
-        # hypothesize uniform distribution
+        # hypothesize power-low distribution
         # vocab size = num_sense * vocab_size_per_sense
         # e.g. num_sense = 2, vocab_size_per_sense = 3 then vocab size is 6
         self.word_probs = []
         for sense in range(self.num_senses):
-            start_idx = sense * self.vocab_size_per_sense
-            end_idx = (sense + 1) * self.vocab_size_per_sense
-            probs = [0 if i < start_idx or i >= end_idx 
-                     else (1.0 / self.vocab_size_per_sense)
-                     for i in range(self.vocab_size_per_sense * self.num_senses)]
+            dirichlet = np.random.dirichlet([1 for _ in range(self.vocab_size_per_sense)]).tolist()
+            cnt_pre = sense * self.vocab_size_per_sense
+            cnt_post = (self.num_senses - sense - 1) * self.vocab_size_per_sense
+            probs = [0.0 for _ in range(cnt_pre)] + dirichlet \
+                    + [0.0 for _ in range(cnt_post)]
             self.word_probs.append(probs)
         self.id_to_token = []
         num_common_vocab = int(self.vocab_size_per_sense * self.ratio_common_vocab)
