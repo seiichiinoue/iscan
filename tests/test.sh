@@ -34,7 +34,7 @@ python3 tests/sample_data.py --num-times $NUM_TIMES \
        -context_window_width=$CONTEXT_WINDOW_SIZE \
        -scaling_coeff=$SCALING_COEFF \
        -sigma_coeff=$SIGMA_COEFF \
-       -kappa_psi=KAPPA_PSI \
+       -kappa_psi=$KAPPA_PSI \
        -start_year=0 \
        -end_year=$NUM_TIMES \
        -year_interval=1 \
