@@ -236,7 +236,11 @@ public:
     void _compute_min_word_count() {
         vector<pair<size_t, int>> ordered_vocab(_word_frequency.begin(), _word_frequency.end());
         sort(ordered_vocab.begin(), ordered_vocab.end(), compare);
-        _min_word_count = ordered_vocab[_top_n_word-1].second;
+        if (ordered_vocab.size() > _top_n_word) {
+            _min_word_count = ordered_vocab[_top_n_word-1].second;
+        } else {
+            _min_word_count = 0;
+        }
     }
     void initialize_cache() {
         _logistic_Phi = new double*[_scan->_n_t];
