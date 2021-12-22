@@ -68,7 +68,8 @@ class Sampler:
                  context_window_size: int = 10,
                  vocab_size_per_sense: int = 3,
                  ratio_common_vocab: float = 0.2,
-                 shift_type: str = "default"):
+                 shift_type: str = "default",
+                 word_prior_type: str = "dirichlet"):
         self.num_times = num_times
         self.num_senses = num_senses
         self.context_window_size = context_window_size
@@ -96,11 +97,16 @@ class Sampler:
         for sense in range(self.num_senses):
             cnt_pre = sense * self.vocab_size_per_sense
             cnt_post = (self.num_senses - sense - 1) * self.vocab_size_per_sense
-            probs = np.random.dirichlet(
-                [1 for _ in range(cnt_pre)]
-                + [10 for _ in range(self.vocab_size_per_sense)]
-                + [1 for _ in range(cnt_post)]
-                ).tolist()
+            if word_prior_type == "dirichlet":
+                probs = [0.0 for _ in range(cnt_pre)] \
+                    + np.random.dirichlet(
+                        [1 for _ in range(self.vocab_size_per_sense)]
+                    ).tolist() \
+                    + [0.0 for _ in range(cnt_post)]
+            elif word_prior_type == "uniform":
+                probs = [0.0 for _ in range(cnt_pre)] \
+                    + [1.0 / self.vocab_size_per_sense for _ in range(self.vocab_size_per_sense)] \
+                    + [0.0 for _ in range(cnt_post)]
             self.word_probs.append(probs)
         self.id_to_token = []
         num_common_vocab = int(self.vocab_size_per_sense * self.ratio_common_vocab)
@@ -164,6 +170,7 @@ if __name__ == "__main__":
     parser.add_argument('--num-sample', type=int, default=100)
     parser.add_argument('--shift-type', type=str, default="random")
     parser.add_argument('--output-path', type=str, default="pseudo_data.txt")
+    parser.add_argument('--word-prior-type', type=str, default="dirichlet")
     args = parser.parse_args()
 
     OUTPUT_PATH = args.output_path
@@ -174,7 +181,8 @@ if __name__ == "__main__":
         context_window_size=args.context_window_size,
         vocab_size_per_sense=args.vocab_size_per_sense,
         ratio_common_vocab=args.ratio_common_vocab,
-        shift_type=args.shift_type
+        shift_type=args.shift_type,
+        word_prior_type=args.word_prior_type
         )
     plot_curve(args.num_times, sampler.senses)
     plot_proportion(sampler.probs)
