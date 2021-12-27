@@ -31,7 +31,7 @@ $ ./scan -num_iteration=1000 -top_n_word=1000 -data_path=PATH_TO_DATA -save_path
 
 ## Estimation with pseudo data
 
-tun to generate pseudo data and train model.
+run to generate pseudo data and train model.
 
 ```
 $ sh tests/test.sh NUM_SENSES
