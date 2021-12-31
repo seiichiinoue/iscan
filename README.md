@@ -34,7 +34,7 @@ $ ./scan -num_iteration=1000 -top_n_word=1000 -data_path=PATH_TO_DATA -save_path
 run to generate pseudo data and train model.
 
 ```
-# make prob
+$ make prob
 $ sh tests/test.sh NUM_SENSES
 ```
 
