@@ -28,7 +28,7 @@ namespace scan {
         int _num_docs;
 
         // parameters
-        double _kappa_phi;
+        double* _kappa_phi;
         double _kappa_psi;
         int* _Z;
         double** _Phi;
@@ -45,7 +45,7 @@ namespace scan {
             _vocab_size = 0;
             _num_docs = 0;
 
-            _kappa_phi = KAPPA_PHI;
+            _kappa_phi = NULL;
             _kappa_psi = KAPPA_PSI;
             _Z = NULL;
             _Phi = NULL;
@@ -53,6 +53,9 @@ namespace scan {
             _scaling_coeff = SCALING_COEFF;
         }
         ~SCAN() {
+            if (_kappa_phi != NULL) {
+                delete _kappa_phi;
+            }
             if (_Z != NULL) {
                 delete[] _Z;
             }
@@ -80,10 +83,14 @@ namespace scan {
             _vocab_size = vocab_size;
             _num_docs = num_docs;
 
+            _kappa_phi = new double[_n_k];
             _Z = new int[num_docs];
             _Phi = new double*[_n_t];
             _Psi = new double**[_n_t];
-
+            
+            for (int k=0; k<_n_k; ++k) {
+                _kappa_phi[k] = KAPPA_PHI;
+            }
             for (int n=0; n<_num_docs; ++n) {
                 _Z[n] = sampler::uniform_int(0, _n_k-1);
             }
@@ -137,9 +144,11 @@ template<class Archive>
         archive & scan._context_window_width;
         archive & scan._vocab_size;
         archive & scan._num_docs;
-        archive & scan._kappa_phi;
         archive & scan._kappa_psi;
         archive & scan._scaling_coeff;
+        for (int k=0; k<scan._n_k; ++k) {
+            archive & scan._kappa_phi[k];
+        }
         for (int n=0; n<scan._num_docs; ++n) {
             archive & scan._Z[n];
         }
@@ -165,9 +174,11 @@ template<class Archive>
         archive & scan._context_window_width;
         archive & scan._vocab_size;
         archive & scan._num_docs;
-        archive & scan._kappa_phi;
         archive & scan._kappa_psi;
         archive & scan._scaling_coeff;
+        if (scan._kappa_phi == NULL) {
+            scan._kappa_phi = new double[scan._n_k];
+        }
         if (scan._Z == NULL) {
             scan._Z = new int[scan._num_docs];
         }
@@ -185,6 +196,9 @@ template<class Archive>
                     scan._Psi[t][k] = new double[scan._vocab_size];
                 }
             }
+        }
+        for (int k=0; k<scan._n_k; ++k) {
+            archive & scan._kappa_phi[k];
         }
         for (int n=0; n<scan._num_docs; ++n) {
             archive & scan._Z[n];
