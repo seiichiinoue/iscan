@@ -25,7 +25,8 @@ year_N d_N_context_{-I} d_N_context_{-I+1} ... d_N_context_{-1} d_N_context_{+1}
 compile and train.
 
 ```
-$ make
+$ make scan
+$ make prob
 $ ./scan -num_iteration=1000 -top_n_word=1000 -data_path=PATH_TO_DATA -save_path=PATH_TO_MODEL
 ```
 
