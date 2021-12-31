@@ -30,12 +30,8 @@ int main(int argc, char *argv[]) {
     google::InitGoogleLogging(*argv);
     google::ParseCommandLineFlags(&argc, &argv, true);
     SCANTrainer trainer;
-    // set hyper parameter
+    // set hyper parameters
     trainer.set_num_sense(FLAGS_num_sense);
-    trainer.set_kappa_phi(FLAGS_kappa_phi);
-    trainer.set_kappa_psi(FLAGS_kappa_psi);
-    trainer.set_gamma_a(FLAGS_gamma_a);
-    trainer.set_gamma_b(FLAGS_gamma_b);
     trainer.set_kappa_phi_start(FLAGS_kappa_phi_start);
     trainer.set_kappa_phi_interval(FLAGS_kappa_phi_interval);
     trainer.set_scaling_coeff(FLAGS_scaling_coeff);
@@ -52,6 +48,11 @@ int main(int argc, char *argv[]) {
     trainer.load_documents(FLAGS_data_path);
     // prepare model
     trainer.prepare(FLAGS_mle_initialize);
+    // initialize parameters
+    trainer.set_kappa_phi(FLAGS_kappa_phi);
+    trainer.set_kappa_psi(FLAGS_kappa_psi);
+    trainer.set_gamma_a(FLAGS_gamma_a);
+    trainer.set_gamma_b(FLAGS_gamma_b);
     // load archive if from_archive is true
     if (FLAGS_from_archive) {
         trainer.load(FLAGS_load_path);
@@ -60,7 +61,7 @@ int main(int argc, char *argv[]) {
     }
     // logging summary
     cout << "{num_sense: " << trainer._scan->_n_k << ", num_time: " << trainer._scan->_n_t
-        << ", kappa_phi: " << trainer._scan->_kappa_phi << ", kappa_psi: " << trainer._scan->_kappa_psi
+        << ", kappa_psi: " << trainer._scan->_kappa_psi
         << ", gamma_a: " << trainer._scan->_gamma_a << ", gamma_b: " << trainer._scan->_gamma_b
         << ", scaling_coeff: " << trainer._scan->_scaling_coeff
         << ", context_window_width: " << trainer._scan->_context_window_width

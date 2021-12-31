@@ -85,6 +85,7 @@ public:
     double*** _logistic_Psi;
     double* _probs;
     double* _prior_mean_phi;
+    double* _prior_sigma2_phi;
     double* _prior_mean_psi;
 
     int _start_year;
@@ -118,6 +119,7 @@ public:
         _logistic_Psi = NULL;
         _probs = NULL;
         _prior_mean_phi = NULL;
+        _prior_sigma2_phi = NULL;
         _prior_mean_psi = NULL;
 
         _sigma_coeff = SIGMA_COEFF;
@@ -159,6 +161,9 @@ public:
         }
         if (_prior_mean_phi != NULL) {
             delete[] _prior_mean_phi;
+        }
+        if (_prior_sigma2_phi != NULL) {
+            delete[] _prior_sigma2_phi;
         }
         if (_prior_mean_psi != NULL) {
             delete[] _prior_mean_psi;
@@ -247,6 +252,7 @@ public:
         _logistic_Psi = new double**[_scan->_n_t];
         _probs = new double[_scan->_n_k];
         _prior_mean_phi = new double[_scan->_n_k];
+        _prior_sigma2_phi = new double[_scan->_n_k];
         _prior_mean_psi = new double[_scan->_vocab_size];
 
         for (int t=0; t<_scan->_n_t; ++t) {
@@ -284,7 +290,9 @@ public:
         _scan->_n_k = n_k;
     }
     void set_kappa_phi(double kappa_phi) {
-        _scan->_kappa_phi = kappa_phi;
+        for (int k=0; k<_scan->_n_k; ++k) {
+            _scan->_kappa_phi[k] = kappa_phi;
+        }
     }
     void set_kappa_psi(double kappa_psi) {
         _scan->_kappa_psi = kappa_psi;
@@ -396,25 +404,24 @@ public:
     void sample_phi(int t) {
         // sample phi under each time $t$
         _update_logistic_Phi();
-        double prior_sigma2;
         double* phi_t = _scan->_Phi[t];
         double* logistic_phi_t = _logistic_Phi[t];
         if (t == 0) {
             for (int k=0; k<_scan->_n_k; ++k) {
                 _prior_mean_phi[k] = _scan->_Phi[t+1][k];
+                _prior_sigma2_phi[k] = 1.0 / _scan->_kappa_phi[k];
             }
-            prior_sigma2 = 1.0 / _scan->_kappa_phi;
         } else if (t+1 == _scan->_n_t) {
             for (int k=0; k<_scan->_n_k; ++k) {
                 _prior_mean_phi[k] = _scan->_Phi[t-1][k];
+                _prior_sigma2_phi[k] = 1.0 / _scan->_kappa_phi[k];
             }
-            prior_sigma2 = 1.0 / _scan->_kappa_phi;
         } else {
             for (int k=0; k<_scan->_n_k; ++k) {
                 _prior_mean_phi[k] = _scan->_Phi[t-1][k] + _scan->_Phi[t+1][k];
                 _prior_mean_phi[k] *= 0.5;
+                _prior_sigma2_phi[k] = 1.0 / (2.0 * _scan->_kappa_phi[k]);
             }
-            prior_sigma2 = 1.0 / (2.0 * _scan->_kappa_phi);
         }
         vector<int> cnt_t(_scan->_n_k, 0);
         int sum_cnt_t = 0;
@@ -432,8 +439,8 @@ public:
         // sampling with polya-gamma sampler
         for (int k=0; k<_scan->_n_k-1; ++k) {
             double omega_k = sampler::polya_gamma(nx[k], phi_t[k]);
-            double sigma2_k_tilde = (double)(1.0) / (omega_k + ((double)(1.0) / prior_sigma2));
-            double mu_k_tilde = ((cnt_t[k] - (nx[k] / (double)(2.0))) + (_prior_mean_phi[k] / prior_sigma2)) * sigma2_k_tilde;
+            double sigma2_k_tilde = (double)(1.0) / (omega_k + ((double)(1.0) / _prior_sigma2_phi[k]));
+            double mu_k_tilde = ((cnt_t[k] - (nx[k] / (double)(2.0))) + (_prior_mean_phi[k] / _prior_sigma2_phi[k])) * sigma2_k_tilde;
             double noise = sampler::normal();
             double sampled = mu_k_tilde + noise * sqrt(sigma2_k_tilde);
             _scan->_Phi[t][k] = sampled;
@@ -523,9 +530,9 @@ public:
         return;
     }
     void sample_kappa() {
-        double a = _scan->_gamma_a + (double)((_scan->_n_k - 1) * _scan->_n_t) * 0.5;
-        double b = 0.0;
+        double a = _scan->_gamma_a + (double)(_scan->_n_t) * 0.5;
         for (int k=0; k<_scan->_n_k-1; ++k) {
+            double b = 0.0;
             double mu_phi = 0.0;
             for (int t=0; t<_scan->_n_t; ++t) {
                 mu_phi += _scan->_Phi[t][k];
@@ -534,9 +541,9 @@ public:
             for (int t=0; t<_scan->_n_t; ++t) {
                 b += pow(_scan->_Phi[t][k] - mu_phi, 2);
             }
+            b = _scan->_gamma_b + (b / 2.0);
+            _scan->_kappa_phi[k] = sampler::gamma(a, b);
         }
-        b = _scan->_gamma_b + (b / 2.0);
-        _scan->_kappa_phi = sampler::gamma(a, b);
         return;
     }
     bool sample_scaling_coeff() {
@@ -655,7 +662,6 @@ public:
             cout << "iter: " << _current_iter 
                 << " log_likelihood: " << log_pw
                 << " perplexity: " << ppl 
-                << " kappa_phi: " << _scan->_kappa_phi
                 << " scaling_coeff: " << _scan->_scaling_coeff
                 << endl;
             save(save_path);
