@@ -25,8 +25,7 @@ year_N d_N_context_{-I} d_N_context_{-I+1} ... d_N_context_{-1} d_N_context_{+1}
 compile and train.
 
 ```
-$ make scan
-$ make prob
+$ make
 $ ./scan -num_iteration=1000 -top_n_word=1000 -data_path=PATH_TO_DATA -save_path=PATH_TO_MODEL
 ```
 
@@ -35,6 +34,7 @@ $ ./scan -num_iteration=1000 -top_n_word=1000 -data_path=PATH_TO_DATA -save_path
 run to generate pseudo data and train model.
 
 ```
+# make prob
 $ sh tests/test.sh NUM_SENSES
 ```
 
