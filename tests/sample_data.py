@@ -150,12 +150,12 @@ def plot_curve(t, senses):
     plt.savefig(f'tests/fig/gp_sense{str(len(senses))}.png')
 
 def plot_proportion(probs):
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10, 5))
     legend = []
     for i in range(len(probs[0])):
         ax.bar([str(j) for j in range(len(probs))], probs[:, i], bottom=probs[:, :i].sum(axis=1))
         legend.append(f"sense_{str(i)}")
-    plt.legend(legend, loc='upper left', bbox_to_anchor=(0, -0.1),)
+    plt.legend(legend, loc='upper left', bbox_to_anchor=(0, -0.1), ncol=5)
     fig.tight_layout()
     plt.savefig(f'tests/fig/gp_prob_sense{str(len(probs[0]))}.png')
 

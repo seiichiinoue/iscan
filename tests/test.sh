@@ -47,6 +47,3 @@ python3 tests/sample_data.py --num-times $NUM_TIMES \
 
 # output probabilities
 ./prob -model_path=$BINARY_PATH -use_npmi=false > scripts/out/${SUFFIX}
-cd scripts
-python3 plot_prob.py ${SUFFIX}
-cd ..
