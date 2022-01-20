@@ -1,4 +1,4 @@
-# Logistic Stick Breaking Mixture Model of Diachronic Meaning Change
+# Infinite Mixture Model of Diachronic Meaning Change
 
 ## Environment
 
