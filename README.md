@@ -1,6 +1,6 @@
 # Infinite Mixture Model of Diachronic Meaning Change
 
-This is an implementation of the Infinite SCAN in "Infinite SCAN: Joint Estimation of Changes and the Number of Word Senses with Gaussian Markov Random Fields." (En/[Ja](http://chasen.org/~daiti-m/paper/inoue22gmrf-change.pdf))
+This is an implementation of the Infinite SCAN in "Infinite SCAN: Joint Estimation of Changes and the Number of Word Senses with Gaussian Markov Random Fields."
 
 ## Environment
 
