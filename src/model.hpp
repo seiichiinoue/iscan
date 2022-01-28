@@ -655,15 +655,17 @@ public:
             }
             if (_current_iter > _kappa_phi_start && _current_iter % _kappa_phi_interval == 0) {
                 sample_kappa();
-                sample_scaling_coeff();
             }
             double log_pw = compute_log_likelihood();
             double ppl = exp((-1 * log_pw) / get_sum_word_frequency());
             cout << "iter: " << _current_iter 
                 << " log_likelihood: " << log_pw
                 << " perplexity: " << ppl 
-                << " scaling_coeff: " << _scan->_scaling_coeff
-                << endl;
+                << " kappa_phi: ";
+            for (int k=0; k<_scan->_n_k-1; ++k) {
+                cout << _scan->_kappa_phi[k] << ",";
+            }
+            cout << _scan->_kappa_phi[_scan->_n_k-1] << endl;
             save(save_path);
         }
     }
