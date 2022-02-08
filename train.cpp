@@ -13,7 +13,7 @@ DEFINE_double(sigma_coeff, 0.05, "random walk width of MH sampling");
 DEFINE_int32(start_year, 1700, "start year in the corpus");
 DEFINE_int32(end_year, 2020, "end year in the corpus");
 DEFINE_int32(year_interval, 20, "year interval");
-DEFINE_int32(context_window_width, 10, "context window width");
+DEFINE_int32(context_window_width, 5, "context window width");
 DEFINE_int32(num_iteration, 1000, "number of iteration");
 DEFINE_int32(burn_in_period, 500, "burn in period");
 DEFINE_int32(top_n_word, 1000, "threshold for vocabulary selection");
@@ -64,9 +64,7 @@ int main(int argc, char *argv[]) {
         << ", kappa_psi: " << trainer._scan->_kappa_psi
         << ", gamma_a: " << trainer._scan->_gamma_a << ", gamma_b: " << trainer._scan->_gamma_b
         << ", scaling_coeff: " << trainer._scan->_scaling_coeff
-        << ", context_window_width: " << trainer._scan->_context_window_width
         << ", num_iteration: " << FLAGS_num_iteration
-        << ", burn_in_period: " << FLAGS_burn_in_period
         << ", top_n_word: " << FLAGS_top_n_word
         << ", min_snippet_count: " << FLAGS_min_snippet_count
         << ", min_snippet_length: " << FLAGS_min_snippet_length << "}" << endl;
