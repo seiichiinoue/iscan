@@ -284,7 +284,9 @@ public:
         // initialize gaussian sampler for MH sampling
         _noise_coeff = normal_distribution<double>(0, _sigma_coeff);
         // compute min_word_count according to top_n_word
-        _compute_min_word_count();
+        if (_min_word_count == 0) {  // initial value
+            _compute_min_word_count();
+        }
     }
     void set_num_sense(int n_k) {
         _scan->_n_k = n_k;
