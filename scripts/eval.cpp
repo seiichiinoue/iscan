@@ -10,7 +10,7 @@ bool compare_by_b(std::pair<wstring, double> a, std::pair<wstring, double> b) {
 std::vector<std::pair<wstring, double>> word_ranking(SCANTrainer &trainer, int t, int k) {
     std::vector<std::pair<wstring, double>> pw;
     for (int v=0; v<trainer._scan->_vocab_size; ++v) {
-        if (trainer._word_frequency[v] < trainer._ignore_word_count) {
+        if (trainer._word_frequency[v] < trainer._min_word_count) {
             continue;
         }
         wstring word = trainer._vocab->word_id_to_string(v);
