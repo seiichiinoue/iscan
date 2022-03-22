@@ -39,7 +39,7 @@ double compute_log_likelihood(SCANTrainer &trainer, vector<vector<size_t>> &data
             for (int i=0; i<trainer._scan->_context_window_width; ++i) {
                 size_t word_id = dataset[n][i];
                 if (word_id == trainer._vocab->num_words()) continue;
-                if (trainer._word_frequency[word_id] < trainer._ignore_word_count) {
+                if (trainer._word_frequency[word_id] < trainer._min_word_count) {
                     continue;
                 }
                 probs_n[k] += log(trainer._logistic_Psi[trainer._scan->_n_t-1][k][word_id]);
@@ -62,7 +62,7 @@ double compute_log_likelihood(SCANTrainer &trainer, vector<vector<size_t>> &data
         for (int i=0; i<trainer._scan->_context_window_width; ++i) {
             size_t word_id = dataset[n][i];
             if (word_id == trainer._vocab->num_words()) continue;
-            if (trainer._word_frequency[word_id] < trainer._ignore_word_count) {
+            if (trainer._word_frequency[word_id] < trainer._min_word_count) {
                 continue;
             }
             log_pw += log(trainer._logistic_Psi[trainer._scan->_n_t-1][sense][word_id]);
@@ -73,7 +73,7 @@ double compute_log_likelihood(SCANTrainer &trainer, vector<vector<size_t>> &data
 int get_sum_word_frequency(SCANTrainer &trainer, unordered_map<size_t, int> word_frequency) {
     int sum = 0;
     for (int v=0; v<trainer._vocab->num_words(); ++v) {
-        if (trainer._word_frequency[v] >= trainer._ignore_word_count) {
+        if (trainer._word_frequency[v] >= trainer._min_word_count) {
             sum += word_frequency[v];
         }
     }
