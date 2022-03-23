@@ -11,24 +11,14 @@ $ docker build -t boost .
 $ docker run -it -v LOCAL_PATH:CONTAINER_PATH boost
 ```
 
-## Create Snippets
+## Create snippets
 
 before run command, you need to prepare time-series corpora.
+
 corpora should be placed in an arbitrary directory consisting of a group of files by year.
 
 ```
-$ python3 scripts/create_snippets.py --lang en --year_start 1800 --year_end 2010 --window_size 5 --input_path INPUT_PATH --output_path OUTPUT_PATH TARGET_WORD1 TARGET_WORD2 ...
-```
-
-## Data
-
-`corpus.txt`: each line correspond to word-specific snippet
-
-```
-year_0 d_0_context_{-I} d_0_context_{-I+1} ... d_0_context_{-1} d_0_context_{+1} d_0_context_{+2} ... d_0_context_{+I}
-year_1 d_1_context_{-I} d_1_context_{-I+1} ... d_1_context_{-1} d_1_context_{+1} d_1_context_{+2} ... d_1_context_{+I}
-...
-year_N d_N_context_{-I} d_N_context_{-I+1} ... d_N_context_{-1} d_N_context_{+1} d_N_context_{+2} ... d_N_context_{+I}
+$ python3 scripts/create_snippets.py --lang LANG --year_start YEAR_START --year_end YEAR_END --window_size WINDOW_SIZE --input_path INPUT_PATH --output_path OUTPUT_PATH TARGET_WORD1 TARGET_WORD2 ...
 ```
 
 ## Run
