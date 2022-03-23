@@ -21,3 +21,5 @@ log/
 run.sh
 *.pickle
 out*
+# allow
+!scripts/create_snippets.py
