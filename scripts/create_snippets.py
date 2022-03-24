@@ -24,11 +24,22 @@ available_pos = ['NN', 'NNS', 'NNP', 'NNPS', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', '
 stop_words = set(stopwords.words('english'))
 stop_words |= {"'", '"', ':', ';', '.', ',', '-', '--', '...', '//', '/', '!', '?', "'s", "@", "<p>", "(", ")"}
 
-def _preprocess_english(line):
-    line = tagger.tag_sents([line])[0]
-    line = [(w, pos) for w, pos in line if pos in available_pos]
-    line = [lemmatizer.lemmatize(w.lower(), pos2id[pos]) for w, pos in line if not w.lower() in stop_words and w.isalpha()]
-    return line
+def _remove_unnecessary_sents(corpus, target_words):
+    def check(sentence):
+        for tar in target_words:
+            if tar in sentence:
+                return True
+        return False
+    return [sent for sent in corpus if check(sent)]
+
+def _preprocess_english(sents):
+    sents = tagger.tag_sents(sents)
+    ret = []
+    for line in sents:
+        line = [(w, pos) for w, pos in line if pos in available_pos]
+        line = [lemmatizer.lemmatize(w.lower(), pos2id[pos]) for w, pos in line if not w.lower() in stop_words and w.isalpha()]
+        ret.append(line)
+    return ret
 
 def _precalc_statistics(corpora):
     global word_freq, sum_word_freq
@@ -39,15 +50,17 @@ def _precalc_statistics(corpora):
     sum_word_freq = sum(word_freq.values())
     return None
 
-def _preprocess_japanese(line):
+def _preprocess_japanese(sents):
     def _remove_prob(x):
         return 1.0 - np.sqrt(1e-4 / float(word_freq[x] / sum_word_freq))
-
-    line = [w for w in line 
-            if not w.isnumeric() 
-            and w not in stop_words
-            and (1 if _remove_prob(w) < 0 else 1 - np.random.binomial(1, _remove_prob(w)))]
-    return line
+    ret = []
+    for line in sents:
+        line = [w for w in line 
+                if not w.isnumeric() 
+                and w not in stop_words
+                and (1 if _remove_prob(w) < 0 else 1 - np.random.binomial(1, _remove_prob(w)))]
+        ret.append(line)
+    return ret
 
 def create_snippets(corpora,
                     target_words,
@@ -60,11 +73,12 @@ def create_snippets(corpora,
     if lang == "ja":
         _precalc_statistics(corpora)
     for year, corpus in tqdm(corpora):
+        if lang == "en":
+            corpus = _remove_unnecessary_sents(corpus, target_words)
+            corpus = _preprocess_english(corpus)
+        elif lang == "ja":
+            corpus = _preprocess_japanese(corpus)
         for line in corpus:
-            if lang == "en":
-                line = _preprocess_english(line)
-            elif lang == "ja":
-                line = _preprocess_japanese(line)
             if len(line) < 2:
                 continue
             for i, word in enumerate(line):
@@ -76,14 +90,14 @@ def create_snippets(corpora,
             for snippet in snippets_y_w:
                 if not os.path.exists(os.path.join(output_path, tar_word)):
                     os.mkdir(os.path.join(output_path, tar_word))
-                with open(os.path.join(output_path, tar_word, "corpus.txt"), "a") as f:
+                with open(os.path.join(output_path, tar_word, "snippets.txt"), "a") as f:
                     f.write(f"{str(year)} {' '.join(snippet)}\n")
 
 def load_corpora(corpora_path):
     files = os.listdir(corpora_path)
     corpora = []
     for fn in files:
-        corpus = [line.strip().split() for line in open(os.path.join(corpora_path, fn)).readlines()]
+        corpus = [sent.strip().split() for sent in open(os.path.join(corpora_path, fn)).readlines()]
         year = int(fn.split(".")[0])
         corpora.append([year, corpus])
     return corpora
