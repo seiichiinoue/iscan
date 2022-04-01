@@ -107,6 +107,12 @@ class Sampler:
                 probs = [0.0 for _ in range(cnt_pre)] \
                     + [1.0 / self.vocab_size_per_sense for _ in range(self.vocab_size_per_sense)] \
                     + [0.0 for _ in range(cnt_post)]
+            elif word_prior_type == "zipf":
+                powerlaw_vars = [1.0 / i for i in range(1, self.vocab_size_per_sense + 1)]
+                denom = sum(powerlaw_vars)
+                probs = [0.0 for _ in range(cnt_pre)] \
+                    + [var / denom for var in powerlaw_vars] \
+                    + [0.0 for _ in range(cnt_post)]
             self.word_probs.append(probs)
         self.id_to_token = []
         num_common_vocab = int(self.vocab_size_per_sense * self.ratio_common_vocab)
