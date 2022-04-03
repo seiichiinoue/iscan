@@ -108,7 +108,8 @@ class Sampler:
                     + [1.0 / self.vocab_size_per_sense for _ in range(self.vocab_size_per_sense)] \
                     + [0.0 for _ in range(cnt_post)]
             elif word_prior_type == "zipf":
-                powerlaw_vars = [1.0 / i for i in range(1, self.vocab_size_per_sense + 1)]
+                s = 0.75
+                powerlaw_vars = [1.0 / (i ** s) for i in range(1, self.vocab_size_per_sense + 1)]
                 denom = sum(powerlaw_vars)
                 probs = [0.0 for _ in range(cnt_pre)] \
                     + [var / denom for var in powerlaw_vars] \
@@ -131,7 +132,7 @@ class Sampler:
         return np.random.multinomial(1, self.probs[t])
 
     def draw_words(self, n_sample: int = 100, imbalance: bool = False):
-        assert path.exists(OUTPUT_PREFIX)
+        assert not path.exists(OUTPUT_PATH)
         with open(OUTPUT_PATH, "w") as f:
             for t in range(self.num_times):
                 # reduce the number of old sample
