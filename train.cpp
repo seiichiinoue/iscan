@@ -73,6 +73,8 @@ int main(int argc, char *argv[]) {
     cout << "num of docs: " << trainer._scan->_num_docs << endl;
     cout << "sum of word freq: " << trainer.get_sum_word_frequency() << endl;
     cout << "vocab size: " << trainer.get_vocab_size() << endl;
+    cout << "original vocab size: " << trainer.get_original_vocab_size() << endl;
+    cout << "ignore vocab size: " << trainer.get_ignore_vocab_size() << endl;
     // tarining
     trainer.train(FLAGS_num_iteration, FLAGS_save_path);
     return 0;

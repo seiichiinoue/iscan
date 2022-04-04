@@ -354,9 +354,12 @@ public:
         return sum;
     }
     int get_vocab_size() {
-        return _vocab->num_words() - get_ignore_word_size();
+        return _vocab->num_words() - get_ignore_vocab_size();
     }
-    int get_ignore_word_size() {
+    int get_original_vocab_size() {
+        return _vocab->num_words();
+    }
+    int get_ignore_vocab_size() {
         int cnt = 0;
         for (int v=0; v<_word_frequency.size(); ++v) {
             if (_word_frequency[v] < _min_word_count) {
