@@ -7,14 +7,14 @@ VOCAB_SIZE_PER_SENSE=1000
 RATIO_COMMON_VOCAB=0.0
 NUM_SAMPLE=1000
 SHIFT_TYPE="random"
-WORD_PRIOR_TYPE="dirichlet"
+WORD_PRIOR_TYPE="zipf"
 
 # sb-scan
 NUM_ITERATION=2000
 SCALING_COEFF=1.0
 SIGMA_COEFF=0.05
 KAPPA_PSI=100.0
-TOP_N_WORD=3000
+MIN_WORD_COUNT=10
 
 DAY=$(date "+%m%d")
 INPUT_DATA=./tests/sampled/pseudo_${WORD_PRIOR_TYPE}_sense${NUM_SENSES}_vocab${VOCAB_SIZE_PER_SENSE}_common${RATIO_COMMON_VOCAB}_window${CONTEXT_WINDOW_SIZE}_sample${NUM_SAMPLE}.txt
@@ -39,7 +39,7 @@ python3 tests/sample_data.py --num-times $NUM_TIMES \
        -scaling_coeff=$SCALING_COEFF \
        -sigma_coeff=$SIGMA_COEFF \
        -kappa_psi=$KAPPA_PSI \
-       -top_n_word=$TOP_N_WORD \
+       -min_word_count=$MIN_WORD_COUNT \
        -start_year=0 \
        -end_year=$NUM_TIMES \
        -year_interval=1 \
