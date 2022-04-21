@@ -1,18 +1,17 @@
 # parameters
 # sampler
-NUM_TIMES=16
+NUM_TIMES=10
 NUM_SENSES=$1
 CONTEXT_WINDOW_SIZE=10
 VOCAB_SIZE_PER_SENSE=1000
 RATIO_COMMON_VOCAB=0.0
-NUM_SAMPLE_PER_TIME=1000
+NUM_SAMPLE_PER_TIME=500
 SHIFT_TYPE="random"
 WORD_PRIOR_TYPE="zipf"
 
 # sb-scan
-NUM_ITERATION=2000
+NUM_ITERATION=1000
 SCALING_COEFF=1.0
-SIGMA_COEFF=0.05
 KAPPA_PSI=100.0
 MIN_WORD_COUNT=10
 
@@ -37,7 +36,6 @@ python3 tests/sample_data.py --num-times $NUM_TIMES \
        -save_path=$BINARY_PATH \
        -context_window_width=$CONTEXT_WINDOW_SIZE \
        -scaling_coeff=$SCALING_COEFF \
-       -sigma_coeff=$SIGMA_COEFF \
        -kappa_psi=$KAPPA_PSI \
        -min_word_count=$MIN_WORD_COUNT \
        -start_year=0 \
