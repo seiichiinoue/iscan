@@ -5,7 +5,7 @@ NUM_SENSES=$1
 CONTEXT_WINDOW_SIZE=10
 VOCAB_SIZE_PER_SENSE=1000
 RATIO_COMMON_VOCAB=0.0
-NUM_SAMPLE=1000
+NUM_SAMPLE_PER_TIME=1000
 SHIFT_TYPE="random"
 WORD_PRIOR_TYPE="zipf"
 
@@ -17,8 +17,8 @@ KAPPA_PSI=100.0
 MIN_WORD_COUNT=10
 
 DAY=$(date "+%m%d")
-INPUT_DATA=./tests/sampled/pseudo_${WORD_PRIOR_TYPE}_sense${NUM_SENSES}_vocab${VOCAB_SIZE_PER_SENSE}_common${RATIO_COMMON_VOCAB}_window${CONTEXT_WINDOW_SIZE}_sample${NUM_SAMPLE}.txt
-SUFFIX=pseudo_${WORD_PRIOR_TYPE}_sense${NUM_SENSES}_sample${NUM_SAMPLE}_vocab${VOCAB_SIZE_PER_SENSE}_kappa_psi${KAPPA_PSI}_top_n${TOP_N_WORD}_${DAY}
+INPUT_DATA=./tests/sampled/pseudo_${WORD_PRIOR_TYPE}_sense${NUM_SENSES}_vocab${VOCAB_SIZE_PER_SENSE}_common${RATIO_COMMON_VOCAB}_window${CONTEXT_WINDOW_SIZE}_sample${NUM_SAMPLE_PER_TIME}.txt
+SUFFIX=pseudo_${WORD_PRIOR_TYPE}_sense${NUM_SENSES}_sample${NUM_SAMPLE_PER_TIME}_vocab${VOCAB_SIZE_PER_SENSE}_kappa_psi${KAPPA_PSI}_top_n${TOP_N_WORD}_${DAY}
 BINARY_PATH=./bin/${SUFFIX}.model
 LOG_PATH=./log/out_${SUFFIX}
 
@@ -28,7 +28,7 @@ python3 tests/sample_data.py --num-times $NUM_TIMES \
                              --context-window-size $CONTEXT_WINDOW_SIZE \
                              --vocab-size-per-sense $VOCAB_SIZE_PER_SENSE \
                              --ratio-common-vocab $RATIO_COMMON_VOCAB \
-                             --num-sample $NUM_SAMPLE \
+                             --num-sample $NUM_SAMPLE_PER_TIME \
                              --shift-type $SHIFT_TYPE \
                              --word-prior-type $WORD_PRIOR_TYPE \
                              --output-path $INPUT_DATA
