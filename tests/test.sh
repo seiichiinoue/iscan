@@ -17,7 +17,7 @@ MIN_WORD_COUNT=10
 
 DAY=$(date "+%m%d")
 INPUT_DATA=./tests/sampled/pseudo_${WORD_PRIOR_TYPE}_sense${NUM_SENSES}_vocab${VOCAB_SIZE_PER_SENSE}_common${RATIO_COMMON_VOCAB}_window${CONTEXT_WINDOW_SIZE}_sample${NUM_SAMPLE_PER_TIME}.txt
-SUFFIX=pseudo_${WORD_PRIOR_TYPE}_sense${NUM_SENSES}_sample${NUM_SAMPLE_PER_TIME}_vocab${VOCAB_SIZE_PER_SENSE}_kappa_psi${KAPPA_PSI}_top_n${TOP_N_WORD}_${DAY}
+SUFFIX=pseudo_${WORD_PRIOR_TYPE}_sense${NUM_SENSES}_sample${NUM_SAMPLE_PER_TIME}_vocab${VOCAB_SIZE_PER_SENSE}_kappa_psi${KAPPA_PSI}_min_word${MIN_WORD_COUNT}_${DAY}
 BINARY_PATH=./bin/${SUFFIX}.model
 LOG_PATH=./log/out_${SUFFIX}
 
