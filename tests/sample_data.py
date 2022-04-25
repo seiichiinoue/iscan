@@ -7,7 +7,11 @@ PROJECT_TOP = "/workspace"
 OUTPUT_PREFIX = path.join(PROJECT_TOP, "tests/sampled")
 OUTPUT_PATH = path.join(OUTPUT_PREFIX, "pseudo_data.txt")
 
-np.random.seed(0)
+# for num_time = 16
+# np.random.seed(0)
+
+# for num_time = 10
+np.random.seed(123)
 
 class Sense:
     def __init__(self):
@@ -108,7 +112,7 @@ class Sampler:
                     + [1.0 / self.vocab_size_per_sense for _ in range(self.vocab_size_per_sense)] \
                     + [0.0 for _ in range(cnt_post)]
             elif word_prior_type == "zipf":
-                s = 0.75
+                s = 1.0
                 powerlaw_vars = [1.0 / (i ** s) for i in range(1, self.vocab_size_per_sense + 1)]
                 denom = sum(powerlaw_vars)
                 probs = [0.0 for _ in range(cnt_pre)] \
@@ -149,6 +153,7 @@ class Sampler:
                         snippet.extend([self.id_to_token[word_id] for _ in range(n_word)])
                     f.write("{} {}\n".format(str(t), " ".join(snippet)))
 
+plt.rcParams['font.family'] = 'DejaVu Sans'
 
 def plot_curve(t, senses):
     x = np.linspace(0, t-1, t)
