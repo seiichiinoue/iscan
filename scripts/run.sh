@@ -20,7 +20,8 @@ YEAR_INTERVAL=20
 
 # local params
 TARGET_WORD=$1
-INPUT_DATA=./data/en_v2/${TARGET_WORD}/corpus.txt
+# INPUT_DATA=./data/ja_v5/${TARGET_WORD}.txt
+INPUT_DATA=./data/en_v3/${TARGET_WORD}.txt
 BINARY_PATH=./results/bin/${TARGET_WORD}_${DAY}.model
 LOG_PATH=./results/log/${TARGET_WORD}_${DAY}
 
