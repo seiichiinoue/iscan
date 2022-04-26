@@ -103,13 +103,13 @@ def load_corpora(corpora_path):
     return corpora
 
 parser = argparse.ArgumentParser()
-parser.add_argument('target_words', type=str, nargs='+')
+parser.add_argument('target-words', type=str, nargs='+')
 parser.add_argument('--lang', default='en', type=str)
-parser.add_argument('--year_start', default=1800, type=int)
-parser.add_argument('--year_end', default=2010, type=int)
-parser.add_argument('--window_size', default=5, type=int)
-parser.add_argument('--input_path', default='coha', type=str)
-parser.add_argument('--output_path', default='data', type=str)
+parser.add_argument('--year-start', default=1800, type=int)
+parser.add_argument('--year-end', default=2010, type=int)
+parser.add_argument('--window-size', default=5, type=int)
+parser.add_argument('--input-path', default='coha', type=str)
+parser.add_argument('--output-path', default='data', type=str)
 args = parser.parse_args()
 
 corpora = load_corpora(args.input_path)

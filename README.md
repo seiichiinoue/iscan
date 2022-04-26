@@ -18,7 +18,7 @@ before run command, you need to prepare time-series corpora.
 corpora should be placed in an arbitrary directory consisting of a group of files by year.
 
 ```
-$ python3 tools/create_snippets.py --lang LANG --year_start YEAR_START --year_end YEAR_END --window_size WINDOW_SIZE --input_path INPUT_PATH --output_path OUTPUT_PATH TARGET_WORD1 TARGET_WORD2 ...
+$ python3 tools/create_snippets.py --lang LANG --year-start YEAR_START --year-end YEAR_END --window-size WINDOW_SIZE --input-path INPUT_PATH --output-path OUTPUT_PATH TARGET_WORD1 TARGET_WORD2 ...
 ```
 
 ## Estimation
