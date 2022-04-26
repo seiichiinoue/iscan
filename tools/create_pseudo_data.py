@@ -7,7 +7,11 @@ PROJECT_TOP = "/workspace"
 OUTPUT_PREFIX = path.join(PROJECT_TOP, "tests/sampled")
 OUTPUT_PATH = path.join(OUTPUT_PREFIX, "pseudo_data.txt")
 
-np.random.seed(0)
+# for num_time = 16
+# np.random.seed(0)
+
+# for num_time = 10
+np.random.seed(123)
 
 class Sense:
     def __init__(self):

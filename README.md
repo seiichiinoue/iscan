@@ -18,7 +18,7 @@ before run command, you need to prepare time-series corpora.
 corpora should be placed in an arbitrary directory consisting of a group of files by year.
 
 ```
-$ python3 scripts/create_snippets.py --lang LANG --year_start YEAR_START --year_end YEAR_END --window_size WINDOW_SIZE --input_path INPUT_PATH --output_path OUTPUT_PATH TARGET_WORD1 TARGET_WORD2 ...
+$ python3 tools/create_snippets.py --lang LANG --year_start YEAR_START --year_end YEAR_END --window_size WINDOW_SIZE --input_path INPUT_PATH --output_path OUTPUT_PATH TARGET_WORD1 TARGET_WORD2 ...
 ```
 
 ## Run
@@ -27,7 +27,7 @@ compile and train.
 
 ```
 $ make
-$ ./scan -num_iteration=1000 -top_n_word=1000 -data_path=PATH_TO_DATA -save_path=PATH_TO_MODEL
+$ ./scan -num_iteration=1000 -min_word_count=10 -data_path=PATH_TO_DATA -save_path=PATH_TO_MODEL
 ```
 
 ## Estimation with pseudo data
@@ -35,8 +35,17 @@ $ ./scan -num_iteration=1000 -top_n_word=1000 -data_path=PATH_TO_DATA -save_path
 run to generate pseudo data and train model.
 
 ```
+$ python3 tools/create_snippets.py --num-times NUM_TIMES --num-senses NUM_SENSES --context-window-size WINDOW_SIZE --vocab-size-per-sense VOCAB_SIZE --num-sample NUM_SAMPLE --shift-type random --word-prior-type zipf --output-path PATH_TO_DATA
+$ ./scan -data_path=PATH_TO_DATA -save_path=PATH_TO_SAVE -min_word_count=MIN_WORD_COUNT -start_year=0 -end_year=NUM_TIMES -year_interval=1 -num_iteration=NUM_ITERATION
+```
+
+## Output estimated parameters
+
+build and run.
+
+```
 $ make prob
-$ sh tests/test.sh NUM_SENSES
+$ ./prob -model_path=PATH_TO_MODEL -use_npmi=True
 ```
 
 ## References
