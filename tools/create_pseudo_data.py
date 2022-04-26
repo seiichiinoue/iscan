@@ -157,9 +157,10 @@ plt.rcParams['font.family'] = 'DejaVu Sans'
 
 def plot_curve(t, senses):
     x = np.linspace(0, t-1, t)
+    fig = plt.figure(figsize=(10, 5))
     for sense in senses:
         plt.plot(x, sense.priors)
-    plt.savefig(f'tests/fig/gp_sense{str(len(senses))}.png')
+    plt.savefig(f'results/fig/gp_sense{str(len(senses))}.png')
 
 def plot_proportion(probs):
     fig, ax = plt.subplots(figsize=(10, 5))
@@ -169,7 +170,7 @@ def plot_proportion(probs):
         legend.append(f"sense_{str(i)}")
     plt.legend(legend, loc='upper left', bbox_to_anchor=(0, -0.1), ncol=5)
     fig.tight_layout()
-    plt.savefig(f'tests/fig/gp_prob_sense{str(len(probs[0]))}.png')
+    plt.savefig(f'results/fig/gp_prob_sense{str(len(probs[0]))}.png')
 
 
 if __name__ == "__main__":
