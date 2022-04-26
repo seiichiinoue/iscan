@@ -24,5 +24,3 @@ out*
 # allow
 !tools/create_snippets.py
 !tools/create_pseudo_data.py
-!scripts/run.sh
-!scripts/run_test.sh
