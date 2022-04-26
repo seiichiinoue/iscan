@@ -1,10 +1,7 @@
 # dataset
-COHA/
-CLMET/
-CHJ/
+corpora/
 data/
 # binary
-bin/
 scan
 test
 infer
@@ -13,7 +10,7 @@ eval
 # work files
 scripts/
 utils/
-log/
+results/
 tools/*.py
 tests/fig/
 .work/
