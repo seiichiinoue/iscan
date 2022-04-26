@@ -8,10 +8,10 @@ infer
 prob
 eval
 # work files
-scripts/
 utils/
 results/
 tools/*.py
+scripts/*.sh
 .work/
 .idea/
 .backup/
