@@ -21,9 +21,9 @@ corpora should be placed in an arbitrary directory consisting of a group of file
 $ python3 tools/create_snippets.py --lang LANG --year_start YEAR_START --year_end YEAR_END --window_size WINDOW_SIZE --input_path INPUT_PATH --output_path OUTPUT_PATH TARGET_WORD1 TARGET_WORD2 ...
 ```
 
-## Run
+## Estimation
 
-compile and train.
+compile and estimate model.
 
 ```
 $ make
@@ -32,7 +32,7 @@ $ ./scan -num_iteration=1000 -min_word_count=10 -data_path=PATH_TO_DATA -save_pa
 
 ## Estimation with pseudo data
 
-run to generate pseudo data and train model.
+run to generate pseudo data and estimate model.
 
 ```
 $ python3 tools/create_snippets.py --num-times NUM_TIMES --num-senses NUM_SENSES --context-window-size WINDOW_SIZE --vocab-size-per-sense VOCAB_SIZE --num-sample NUM_SAMPLE --shift-type random --word-prior-type zipf --output-path PATH_TO_DATA
