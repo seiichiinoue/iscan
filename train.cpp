@@ -66,7 +66,6 @@ int main(int argc, char *argv[]) {
         << ", gamma_a: " << trainer._scan->_gamma_a << ", gamma_b: " << trainer._scan->_gamma_b
         << ", scaling_coeff: " << trainer._scan->_scaling_coeff
         << ", num_iteration: " << FLAGS_num_iteration
-        << ", top_n_word: " << FLAGS_top_n_word
         << ", min_word_count: " << FLAGS_min_word_count
         << ", min_snippet_count: " << FLAGS_min_snippet_count
         << ", min_snippet_length: " << FLAGS_min_snippet_length << "}" << endl;
