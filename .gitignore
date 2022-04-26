@@ -12,7 +12,6 @@ scripts/
 utils/
 results/
 tools/*.py
-tests/fig/
 .work/
 .idea/
 .backup/
