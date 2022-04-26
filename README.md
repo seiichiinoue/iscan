@@ -45,7 +45,7 @@ build and run.
 
 ```
 $ make prob
-$ ./prob -model_path=PATH_TO_MODEL -use_npmi=True
+$ ./prob -model_path=PATH_TO_MODEL -use_npmi=true
 ```
 
 ## References
