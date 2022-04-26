@@ -11,15 +11,18 @@ infer
 prob
 eval
 # work files
-scripts/fig/
-scripts/*.py
-tests/fig/
-tests/sampled/
+scripts/
+utils/
 log/
+tools/*.py
+tests/fig/
 .work/
 .idea/
-run.sh
+.backup/
 *.pickle
 out*
 # allow
-!scripts/create_snippets.py
+!tools/create_snippets.py
+!tools/create_pseudo_data.py
+!scripts/run.sh
+!scripts/run_test.sh
