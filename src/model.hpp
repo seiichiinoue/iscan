@@ -650,7 +650,7 @@ public:
         }
         return log_pw;
     }
-    void train(int iter=1000, string save_path ="./bin/scan.model") {
+    void train(int iter=1000, string save_path="results/bin/scan.model") {
         for (int i=0; i<iter; ++i) {
             ++_current_iter;
             for (int t=0; t<_scan->_n_t; ++t) {
