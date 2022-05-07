@@ -10,7 +10,6 @@ from collections import defaultdict
 import numpy as np
 from tqdm import tqdm
 
-import MeCab
 from nltk.corpus import stopwords 
 from nltk.stem import WordNetLemmatizer
 from nltk.tag.perceptron import PerceptronTagger
