@@ -154,12 +154,16 @@ class Sampler:
                     f.write("{} {}\n".format(str(t), " ".join(snippet)))
 
 plt.rcParams['font.family'] = 'DejaVu Sans'
+plt.rcParams["font.size"] = 13
 
 def plot_curve(t, senses):
     x = np.linspace(0, t-1, t)
     fig = plt.figure(figsize=(10, 5))
-    for sense in senses:
+    legend = []
+    for i, sense in enumerate(senses):
         plt.plot(x, sense.priors)
+        legend.append(f"sense{str(i)}")
+    plt.legend(legend)
     plt.savefig(f'results/fig/gp_sense{str(len(senses))}.png')
 
 def plot_proportion(probs):
@@ -167,8 +171,8 @@ def plot_proportion(probs):
     legend = []
     for i in range(len(probs[0])):
         ax.bar([str(j) for j in range(len(probs))], probs[:, i], bottom=probs[:, :i].sum(axis=1))
-        legend.append(f"sense_{str(i)}")
-    plt.legend(legend, loc='upper left', bbox_to_anchor=(0, -0.1), ncol=5)
+        legend.append(f"sense{str(i)}")
+    plt.legend(legend, loc='upper left', bbox_to_anchor=(0, -0.1), ncol=4)
     fig.tight_layout()
     plt.savefig(f'results/fig/gp_prob_sense{str(len(probs[0]))}.png')
 
