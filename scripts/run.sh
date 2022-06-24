@@ -5,7 +5,7 @@ KAPPA_PSI=100.0
 KAPPA_PHI_START=100
 KAPPA_PHI_INTERVAL=50
 MIN_SNIPPET_LENGTH=1
-MIN_WORD_COUNT=5
+MIN_WORD_COUNT=10
 DAY=$(date "+%m%d")
 
 # for japanese corpus settings (year)
