@@ -67,6 +67,7 @@ int main(int argc, char *argv[]) {
         << ", scaling_coeff: " << trainer._scan->_scaling_coeff
         << ", num_iteration: " << FLAGS_num_iteration
         << ", min_word_count: " << FLAGS_min_word_count
+        << ", top_n_word: " << FLAGS_top_n_word
         << ", min_snippet_count: " << FLAGS_min_snippet_count
         << ", min_snippet_length: " << FLAGS_min_snippet_length << "}" << endl;
     cout << "num of docs: " << trainer._scan->_num_docs << endl;
