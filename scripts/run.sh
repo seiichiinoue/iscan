@@ -5,7 +5,7 @@ KAPPA_PSI=100.0
 KAPPA_PHI_START=100
 KAPPA_PHI_INTERVAL=50
 MIN_SNIPPET_LENGTH=1
-MIN_WORD_COUNT=10
+TOP_N_WORD=$2
 DAY=$(date "+%m%d")
 
 # for japanese corpus settings (year)
@@ -32,7 +32,7 @@ LOG_PATH=./results/log/${TARGET_WORD}_${DAY}
        -kappa_phi_start=$KAPPA_PHI_START \
        -kappa_phi_interval=$KAPPA_PHI_INTERVAL \
        -min_snippet_length=$MIN_SNIPPET_LENGTH \
-       -min_word_count=$MIN_WORD_COUNT \
+       -top_n_word=$TOP_N_WORD \
        -start_year=$START_YEAR \
        -end_year=$END_YEAR \
        -year_interval=$YEAR_INTERVAL \
