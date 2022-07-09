@@ -35,6 +35,3 @@ python3 tools/create_pseudo_data.py --num-times $NUM_TIMES \
        -end_year=$NUM_TIMES \
        -year_interval=1 \
        -num_iteration=$NUM_ITERATION > $LOG_PATH
-
-# output probabilities
-./prob -model_path=$BINARY_PATH -use_npmi=false > results/out/${SUFFIX}
