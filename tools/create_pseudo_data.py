@@ -67,13 +67,13 @@ class Sense:
 
 class Sampler:
     def __init__(self,
-                 num_times: int = 16,
+                 num_times: int = 10,
                  num_senses: int = 2,
                  context_window_size: int = 10,
-                 vocab_size_per_sense: int = 3,
-                 ratio_common_vocab: float = 0.2,
+                 vocab_size: int = 10000,
+                 ratio_common_vocab: float = 0.0,
                  shift_type: str = "default",
-                 word_prior_type: str = "dirichlet"):
+                 word_prior_type: str = "zipf"):
         self.num_times = num_times
         self.num_senses = num_senses
         self.context_window_size = context_window_size
@@ -92,7 +92,7 @@ class Sampler:
             self.senses.append(sense)
         xs = np.array([s.priors for s in self.senses]).T
         self.probs = np.array([self.softmax(x) for x in xs])
-        self.vocab_size_per_sense = vocab_size_per_sense
+        self.vocab_size_per_sense = vocab_size // self.num_senses
         self.ratio_common_vocab = ratio_common_vocab
         # hypothesize power-low distribution
         # vocab size = num_sense * vocab_size_per_sense
@@ -112,7 +112,7 @@ class Sampler:
                     + [1.0 / self.vocab_size_per_sense for _ in range(self.vocab_size_per_sense)] \
                     + [0.0 for _ in range(cnt_post)]
             elif word_prior_type == "zipf":
-                s = 1.0
+                s = 0.9
                 powerlaw_vars = [1.0 / (i ** s) for i in range(1, self.vocab_size_per_sense + 1)]
                 denom = sum(powerlaw_vars)
                 probs = [0.0 for _ in range(cnt_pre)] \
@@ -135,11 +135,12 @@ class Sampler:
         assert t < self.num_times
         return np.random.multinomial(1, self.probs[t])
 
-    def draw_words(self, n_sample: int = 100, imbalance: bool = False):
+    def draw_words(self, n_sample: int = 10000, imbalance: bool = False):
         assert not path.exists(OUTPUT_PATH)
+        n_sample = n_sample // self.num_times
         with open(OUTPUT_PATH, "w") as f:
             for t in range(self.num_times):
-                # reduce the number of old sample
+                # reduce the number of sample
                 if t < 5 and imbalance:
                     _n_sample = int(n_sample * 0.1)
                 else:
@@ -179,15 +180,15 @@ def plot_proportion(probs):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--num-times', type=int, default=16)
+    parser.add_argument('--num-times', type=int, default=10)
     parser.add_argument('--num-senses', type=int, default=2)
     parser.add_argument('--context-window-size', type=int, default=10)
-    parser.add_argument('--vocab-size-per-sense', type=int, default=10)
-    parser.add_argument('--ratio-common-vocab', type=float, default=0.2)
-    parser.add_argument('--num-sample', type=int, default=100)
+    parser.add_argument('--vocab-size', type=int, default=10000)
+    parser.add_argument('--ratio-common-vocab', type=float, default=0.0)
+    parser.add_argument('--num-sample', type=int, default=10000)
     parser.add_argument('--shift-type', type=str, default="random")
     parser.add_argument('--output-path', type=str, default="pseudo_data.txt")
-    parser.add_argument('--word-prior-type', type=str, default="dirichlet")
+    parser.add_argument('--word-prior-type', type=str, default="zipf")
     args = parser.parse_args()
 
     OUTPUT_PATH = args.output_path
@@ -196,7 +197,7 @@ if __name__ == "__main__":
         num_times=args.num_times,
         num_senses=args.num_senses,
         context_window_size=args.context_window_size,
-        vocab_size_per_sense=args.vocab_size_per_sense,
+        vocab_size=args.vocab_size,
         ratio_common_vocab=args.ratio_common_vocab,
         shift_type=args.shift_type,
         word_prior_type=args.word_prior_type
