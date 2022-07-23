@@ -299,11 +299,11 @@ public:
     void set_kappa_psi(double kappa_psi) {
         _scan->_kappa_psi = kappa_psi;
     }
-    void set_gamma_a(double gamma_a) {
-        _scan->_gamma_a = gamma_a;
+    void set_gamma_phi_a(double gamma_phi_a) {
+        _scan->_gamma_phi_a = gamma_phi_a;
     }
-    void set_gamma_b(double gamma_b) {
-        _scan->_gamma_b = gamma_b;
+    void set_gamma_phi_b(double gamma_phi_b) {
+        _scan->_gamma_phi_b = gamma_phi_b;
     }
     void set_kappa_phi_start(int kappa_phi_start) {
         _kappa_phi_start = kappa_phi_start;
@@ -534,8 +534,8 @@ public:
         }
         return;
     }
-    void sample_kappa() {
-        double a = _scan->_gamma_a + (double)(_scan->_n_t) * 0.5;
+    void sample_kappa_phi() {
+        double a = _scan->_gamma_phi_a + (double)(_scan->_n_t) * 0.5;
         for (int k=0; k<_scan->_n_k-1; ++k) {
             double b = 0.0;
             double mu_phi = 0.0;
@@ -546,10 +546,32 @@ public:
             for (int t=0; t<_scan->_n_t; ++t) {
                 b += pow(_scan->_Phi[t][k] - mu_phi, 2);
             }
-            b = _scan->_gamma_b + (b / 2.0);
+            b = _scan->_gamma_phi_b + (b / 2.0);
             _scan->_kappa_phi[k] = sampler::gamma(a, b);
         }
         return;
+    }
+    void sample_kappa_psi() {
+        int actual_vocab_size = get_vocab_size();
+        double a = _scan->_gamma_psi_a + (double)(actual_vocab_size * _scan->_n_k * _scan->_n_t) * 0.5;
+        double b = 0.0;
+        for (int k=0; k<_scan->_n_k; ++k) {
+            for (int v=0; v<_scan->_vocab_size; ++v) {
+                if (_word_frequency[v] < _min_word_count) {
+                    continue;
+                }
+                double mu_psi = 0.0;
+                for (int t=0; t<_scan->_n_t; ++t) {
+                    mu_psi += _scan->_Psi[t][k][v];
+                }
+                mu_psi /= (double)_scan->_n_t;
+                for (int t=0; t<_scan->_n_t; ++t) {
+                    b += pow(_scan->_Psi[t][k][v] - mu_psi, 2);
+                }
+            }
+        }
+        b = _scan->_gamma_psi_b + (b / 2.0);
+        _scan->_kappa_psi = sampler::gamma(a, b);
     }
     bool sample_scaling_coeff() {
         double scaling_coeff_old = _scan->_scaling_coeff;
@@ -659,7 +681,7 @@ public:
                 sample_psi(t);
             }
             if (_current_iter > _kappa_phi_start && _current_iter % _kappa_phi_interval == 0) {
-                sample_kappa();
+                sample_kappa_phi();
             }
             double log_pw = compute_log_likelihood();
             double ppl = exp((-1 * log_pw) / get_sum_word_frequency());

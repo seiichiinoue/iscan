@@ -6,8 +6,10 @@
 #define NUM_TIME 10
 #define KAPPA_PHI 4.0
 #define KAPPA_PSI 10.0
-#define GAMMA_A 7.0
-#define GAMMA_B 3.0
+#define GAMMA_PHI_A 7.0
+#define GAMMA_PHI_B 3.0
+#define GAMMA_PSI_A 200.0
+#define GAMMA_PSI_B 2.0
 #define SCALING_COEFF 1.0
 #define MIN_SNIPPET_LENGTH 1
 #define SIGMA_COEFF 0.05

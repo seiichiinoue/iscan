@@ -52,8 +52,8 @@ int main(int argc, char *argv[]) {
     // initialize parameters
     trainer.set_kappa_phi(FLAGS_kappa_phi);
     trainer.set_kappa_psi(FLAGS_kappa_psi);
-    trainer.set_gamma_a(FLAGS_gamma_a);
-    trainer.set_gamma_b(FLAGS_gamma_b);
+    trainer.set_gamma_phi_a(FLAGS_gamma_a);
+    trainer.set_gamma_phi_b(FLAGS_gamma_b);
     // load archive if from_archive is true
     if (FLAGS_from_archive) {
         trainer.load(FLAGS_load_path);
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
     // logging summary
     cout << "{num_sense: " << trainer._scan->_n_k << ", num_time: " << trainer._scan->_n_t
         << ", kappa_psi: " << trainer._scan->_kappa_psi
-        << ", gamma_a: " << trainer._scan->_gamma_a << ", gamma_b: " << trainer._scan->_gamma_b
+        << ", gamma_a: " << trainer._scan->_gamma_phi_a << ", gamma_b: " << trainer._scan->_gamma_phi_b
         << ", scaling_coeff: " << trainer._scan->_scaling_coeff
         << ", num_iteration: " << FLAGS_num_iteration
         << ", min_word_count: " << FLAGS_min_word_count

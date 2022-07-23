@@ -20,8 +20,10 @@ namespace scan {
     public:
         int _n_k;
         int _n_t;
-        double _gamma_a;
-        double _gamma_b;
+        double _gamma_phi_a;
+        double _gamma_phi_b;
+        double _gamma_psi_a;
+        double _gamma_psi_b;
         int _context_window_width;
         
         int _vocab_size;
@@ -38,8 +40,10 @@ namespace scan {
         SCAN() {
             _n_k = NUM_SENSE;
             _n_t = NUM_TIME;
-            _gamma_a = GAMMA_A;
-            _gamma_b = GAMMA_B;
+            _gamma_phi_a = GAMMA_PHI_A;
+            _gamma_phi_b = GAMMA_PHI_B;
+            _gamma_psi_a = GAMMA_PSI_A;
+            _gamma_psi_b = GAMMA_PSI_B;
             _context_window_width = CONTEXT_WINDOW_WIDTH;
 
             _vocab_size = 0;
@@ -147,8 +151,10 @@ template<class Archive>
     void save(Archive &archive, const scan::SCAN &scan, unsigned int version) {
         archive & scan._n_k;
         archive & scan._n_t;
-        archive & scan._gamma_a;
-        archive & scan._gamma_b;
+        archive & scan._gamma_phi_a;
+        archive & scan._gamma_phi_b;
+        archive & scan._gamma_psi_a;
+        archive & scan._gamma_psi_b;
         archive & scan._context_window_width;
         archive & scan._vocab_size;
         archive & scan._num_docs;
@@ -177,8 +183,10 @@ template<class Archive>
     void load(Archive &archive, scan::SCAN &scan, unsigned int version) {
         archive & scan._n_k;
         archive & scan._n_t;
-        archive & scan._gamma_a;
-        archive & scan._gamma_b;
+        archive & scan._gamma_phi_a;
+        archive & scan._gamma_phi_b;
+        archive & scan._gamma_psi_a;
+        archive & scan._gamma_psi_b;
         archive & scan._context_window_width;
         archive & scan._vocab_size;
         archive & scan._num_docs;
