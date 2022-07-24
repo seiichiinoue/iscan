@@ -9,12 +9,13 @@ WORD_PRIOR_TYPE="zipf"
 
 # iscan
 NUM_ITERATION=1000
+KAPPA_PHI=10.0
 KAPPA_PSI=100.0
 TOP_N_WORD=$2
 
 DAY=$(date "+%m%d")
-INPUT_DATA=./data/pseudo_v2/pseudo_${WORD_PRIOR_TYPE}_sense${NUM_SENSES}_vocab${VOCAB_SIZE}_sample${NUM_SAMPLE}.txt
-SUFFIX=pseudo_${WORD_PRIOR_TYPE}_sense${NUM_SENSES}_sample${NUM_SAMPLE}_vocab${VOCAB_SIZE}_kappa_psi${KAPPA_PSI}_min_word${MIN_WORD_COUNT}_${DAY}
+INPUT_DATA=./data/pseudo_v3/pseudo_${WORD_PRIOR_TYPE}_sense${NUM_SENSES}_vocab${VOCAB_SIZE}_sample${NUM_SAMPLE}.txt
+SUFFIX=pseudo_${WORD_PRIOR_TYPE}_sense${NUM_SENSES}_sample${NUM_SAMPLE}_vocab${VOCAB_SIZE}_kappa_phi${KAPPA_PHI}_kappa_psi${KAPPA_PSI}_top_n${TOP_N_WORD}_${DAY}
 BINARY_PATH=./results/bin/${SUFFIX}.model
 LOG_PATH=./results/log/${SUFFIX}
 
@@ -29,6 +30,7 @@ python3 tools/create_pseudo_data.py --num-times $NUM_TIMES \
 # execute test
 ./scan -data_path=$INPUT_DATA \
        -save_path=$BINARY_PATH \
+       -kappa_phi=$KAPPA_PHI \
        -kappa_psi=$KAPPA_PSI \
        -top_n_word=$TOP_N_WORD \
        -start_year=0 \

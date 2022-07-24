@@ -4,7 +4,6 @@ KAPPA_PHI=4.0
 KAPPA_PSI=100.0
 KAPPA_PHI_START=100
 KAPPA_PHI_INTERVAL=50
-MIN_SNIPPET_LENGTH=1
 TOP_N_WORD=$2
 DAY=$(date "+%m%d")
 
@@ -31,7 +30,6 @@ LOG_PATH=./results/log/${TARGET_WORD}_${DAY}
        -kappa_psi=$KAPPA_PSI \
        -kappa_phi_start=$KAPPA_PHI_START \
        -kappa_phi_interval=$KAPPA_PHI_INTERVAL \
-       -min_snippet_length=$MIN_SNIPPET_LENGTH \
        -top_n_word=$TOP_N_WORD \
        -start_year=$START_YEAR \
        -end_year=$END_YEAR \
