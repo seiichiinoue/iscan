@@ -216,6 +216,7 @@ public:
             // initialize Phi with MLE
             for (int k=0; k<_scan->_n_k; ++k) {
                 _scan->_Phi[t][k] = ((double)cnt_t[k] + 0.01) / ((double)sum_cnt_t + (_scan->_n_k * 0.01));
+                _scan->_Phi[t][k] = log(_scan->_Phi[t][k]);
             }
             for (int k=0; k<_scan->_n_k; ++k) {
                 vector<int> cnt_t_k(_scan->_vocab_size, 0);
@@ -234,6 +235,7 @@ public:
                 // initialize Psi with MLE
                 for (int v=0; v<_scan->_vocab_size; ++v) {
                     _scan->_Psi[t][k][v] = ((double)cnt_t_k[v] + 0.01) / ((double)sum_cnt_t_k + (_scan->_vocab_size * 0.01));
+                    _scan->_Psi[t][k][v] = log(_scan->_Psi[t][k][v]);
                 }
             }
         }
