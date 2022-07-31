@@ -100,7 +100,7 @@ namespace scan {
                     if (t == 0) {
                         _Phi[t][k] = generate_noise_from_normal_distribution();
                     } else {
-                        _Phi[t][k] = _Phi[t-1][k] + generate_noise_from_normal_distribution() / _kappa_phi[k];
+                        _Phi[t][k] = _Phi[t-1][k] + generate_noise_from_normal_distribution() / sqrt(_kappa_phi[k]);
                     }
                 }
             }
@@ -112,7 +112,7 @@ namespace scan {
                         if (t == 0) {
                             _Psi[t][k][v] = generate_noise_from_normal_distribution();
                         } else {
-                            _Psi[t][k][v] = _Psi[t-1][k][v] + generate_noise_from_normal_distribution() / _kappa_psi;
+                            _Psi[t][k][v] = _Psi[t-1][k][v] + generate_noise_from_normal_distribution() / sqrt(_kappa_psi);
                         }
                     }
                 }
