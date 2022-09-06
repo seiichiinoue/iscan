@@ -87,6 +87,7 @@ public:
     double* _prior_mean_phi;
     double* _prior_sigma2_phi;
     double* _prior_mean_psi;
+    size_t _word_identifier;
 
     int _start_year;
     int _end_year;
@@ -121,6 +122,7 @@ public:
         _prior_mean_phi = NULL;
         _prior_sigma2_phi = NULL;
         _prior_mean_psi = NULL;
+        _word_identifier = -1;
 
         _sigma_coeff = SIGMA_COEFF;
 
@@ -204,7 +206,63 @@ public:
             _word_frequency[word_id] += 1;
         }
     }
-    void _initialize_parameters() {
+    void _find_word_identifier() {
+        cout << _min_word_count << endl;
+        // count time-wise frequency of vocab in the corpus
+        vector<unordered_map<size_t, int>> freq(_scan->_n_t, unordered_map<size_t, int>());
+        for (int n=0; n<_scan->_num_docs; ++n) {
+            for (int i=0; i<_dataset[n].size(); ++i) {
+                size_t word_id = _dataset[n][i];
+                if (_word_frequency[word_id] < _min_word_count) {
+                    continue;
+                }
+                freq[_times[n]][word_id]++;
+            }
+        }
+        // calculate frequency rank
+        vector<int> rank_best(_scan->_vocab_size, 1e5);
+        vector<int> rank_worst(_scan->_vocab_size, 0);
+        vector<int> rank_flag(_scan->_vocab_size, true);
+        for (int t=0; t<_scan->_n_t; ++t) {
+            unordered_map<size_t, int> freq_t = freq[t];
+            vector<pair<size_t, int>> ord_freq_t(freq_t.begin(), freq_t.end());
+            sort(ord_freq_t.begin(), ord_freq_t.end(), compare);
+            // convert freqs to ranks
+            unordered_map<size_t, int> rank_t;
+            for (int i=0; i<ord_freq_t.size(); ++i) {
+                if (_word_frequency[ord_freq_t[i].first] < _min_word_count) {
+                    rank_t[ord_freq_t[i].first] = (int)ord_freq_t.size();
+                } else {
+                    rank_t[ord_freq_t[i].first] = i;
+                }
+            }
+            for (int v=0; v<_scan->_vocab_size; ++v) {
+                if (_word_frequency[v] < _min_word_count || rank_t.find(v) == rank_t.end()) {
+                    // if word do not exist at time t; then remove candidate
+                    rank_flag[v] = false;
+                    continue;
+                }
+                rank_best[v] = std::min(rank_best[v], rank_t[v]);
+                rank_worst[v] = std::max(rank_worst[v], rank_t[v]);
+            }
+        }
+        // choose word with the lowest rank variation
+        size_t static_word_id = -1;
+        int best_rank_variation = 1e5;
+        for (int v=0; v<_scan->_vocab_size; ++v) {
+            if (!rank_flag[v]) {
+                continue;
+            }
+            int rank_variation_v = abs(rank_best[v] - rank_worst[v]);
+            if (best_rank_variation > rank_variation_v) {
+                static_word_id = v;
+                best_rank_variation = rank_variation_v;
+            }
+        }
+        assert(static_word_id != -1);
+        _word_identifier = static_word_id;
+    }
+    void _initialize_parameters_with_mle() {
         for (int t=0; t<_scan->_n_t; ++t) {
             vector<int> cnt_t(_scan->_n_k, 0);
             int sum_cnt_t = 0;
@@ -272,23 +330,26 @@ public:
             _probs[k] = 0.0;
         }
     }
-    void prepare(bool mle=false) {
+    void prepare(bool mle_initialize=false) {
         int num_time = ((_end_year - _start_year) + (_year_interval - 1)) / _year_interval;
         int vocab_size = _vocab->num_words();
         int num_docs = _dataset.size();
         _scan->initialize_cache(num_time, vocab_size, num_docs);
+        // compute min_word_count according to top_n_word
+        if (_min_word_count == -1) {  // initial value
+            _compute_min_word_count();
+        }
+        // find identifier; use as identifier in sense-word distribution
+        _find_word_identifier();
+        _scan->initialize_parameters(_word_identifier);
         // initialize parameters $\phi$ and $\psi$ with MLE
-        if (mle) {
-            _initialize_parameters();
+        if (mle_initialize) {
+            _initialize_parameters_with_mle();
         }
         // after initializing $\phi$ and $\psi$, initialize trainer's chache
         initialize_cache();
         // initialize gaussian sampler for MH sampling
         _noise_coeff = normal_distribution<double>(0, _sigma_coeff);
-        // compute min_word_count according to top_n_word
-        if (_min_word_count == 0) {  // initial value
-            _compute_min_word_count();
-        }
     }
     void set_num_sense(int n_k) {
         _scan->_n_k = n_k;
@@ -505,7 +566,7 @@ public:
                 denom += exp(psi_t_k[v]);
             }
             for (int v=0; v<_scan->_vocab_size; ++v) {
-                if (_word_frequency[v] < _min_word_count) {
+                if (_word_frequency[v] < _min_word_count || v == _word_identifier) {
                     continue;
                 }
                 double constants = denom - exp(psi_t_k[v]);
