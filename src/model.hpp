@@ -655,11 +655,9 @@ public:
     void train(int iter=1000, string save_path="results/bin/scan.model") {
         for (int i=0; i<iter; ++i) {
             ++_current_iter;
-            for (int t=0; t<_scan->_n_t; ++t) {
-                sample_z(t);
-                sample_phi(t);
-                sample_psi(t);
-            }
+            for (int t=0; t<_scan->_n_t; ++t) sample_z(t);
+            for (int t=0; t<_scan->_n_t; ++t) sample_phi(t);
+            for (int t=0; t<_scan->_n_t; ++t) sample_psi(t);
             if (_current_iter > _kappa_phi_start && _current_iter % _kappa_phi_interval == 0) {
                 sample_kappa();
             }

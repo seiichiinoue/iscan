@@ -97,11 +97,7 @@ namespace scan {
             for (int t=0; t<_n_t; ++t) {
                 _Phi[t] = new double[_n_k];
                 for (int k=0; k<_n_k; ++k) {
-                    if (t == 0) {
-                        _Phi[t][k] = generate_noise_from_normal_distribution();
-                    } else {
-                        _Phi[t][k] = _Phi[t-1][k] + generate_noise_from_normal_distribution() / sqrt(_kappa_phi[k]);
-                    }
+                    _Phi[t][k] = generate_noise_from_normal_distribution();
                 }
             }
             for (int t=0; t<_n_t; ++t) {
@@ -109,11 +105,7 @@ namespace scan {
                 for (int k=0; k<_n_k; ++k) {
                     _Psi[t][k] = new double[_vocab_size];
                     for (int v=0; v<_vocab_size; ++v) {
-                        if (t == 0) {
-                            _Psi[t][k][v] = generate_noise_from_normal_distribution();
-                        } else {
-                            _Psi[t][k][v] = _Psi[t-1][k][v] + generate_noise_from_normal_distribution() / sqrt(_kappa_psi);
-                        }
+                        _Psi[t][k][v] = generate_noise_from_normal_distribution();
                     }
                 }
             }
