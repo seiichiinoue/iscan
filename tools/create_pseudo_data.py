@@ -173,6 +173,24 @@ def plot_proportion(probs):
     fig.tight_layout()
     plt.savefig(f'results/fig/gp_prob_sense{str(len(probs[0]))}.png')
 
+def compute_perplexity(sampler, n_sample=10000):
+    sense_probs = sampler.probs
+    word_probs = sampler.word_probs
+    id_to_token = sampler.id_to_token
+    word_mean_prob = [0 for _ in range(len(word_probs[0]))]
+    for sense_probs_t in sense_probs:
+        sense_dict = {sense:prob for sense, prob in enumerate(sense_probs_t)}
+        for sense, word_probs_k in enumerate(word_probs):
+            for word_id, word_prob in enumerate(word_probs_k):
+                prob_t = sense_dict[sense] * word_prob
+                word_mean_prob[word_id] += prob_t
+    word_mean_prob = np.array(word_mean_prob)
+    word_mean_prob /= len(sense_probs)
+    ent = 0.0
+    for w_p in word_mean_prob:
+        ent += w_p * np.log(w_p)
+    return np.exp(-ent)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -198,6 +216,7 @@ if __name__ == "__main__":
         shift_type=args.shift_type,
         word_prior_type=args.word_prior_type
         )
+    # ppl = compute_perplexity(sampler)
     plot_curve(args.num_times, sampler.senses)
     plot_proportion(sampler.probs)
     sampler.draw_words(n_sample=args.num_sample)
