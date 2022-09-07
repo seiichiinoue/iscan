@@ -122,7 +122,7 @@ public:
         _prior_mean_phi = NULL;
         _prior_sigma2_phi = NULL;
         _prior_mean_psi = NULL;
-        _word_identifier = -1;
+        _word_identifier = 0;
 
         _sigma_coeff = SIGMA_COEFF;
 
@@ -207,7 +207,6 @@ public:
         }
     }
     void _find_word_identifier() {
-        cout << _min_word_count << endl;
         // count time-wise frequency of vocab in the corpus
         vector<unordered_map<size_t, int>> freq(_scan->_n_t, unordered_map<size_t, int>());
         for (int n=0; n<_scan->_num_docs; ++n) {
