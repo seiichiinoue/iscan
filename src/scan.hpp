@@ -87,7 +87,8 @@ namespace scan {
             _Z = new int[num_docs];
             _Phi = new double*[_n_t];
             _Psi = new double**[_n_t];
-            
+        }
+        void initialize_parameters(int word_identifier=0) {
             for (int k=0; k<_n_k; ++k) {
                 _kappa_phi[k] = KAPPA_PHI;
             }
@@ -105,6 +106,9 @@ namespace scan {
                 for (int k=0; k<_n_k; ++k) {
                     _Psi[t][k] = new double[_vocab_size];
                     for (int v=0; v<_vocab_size; ++v) {
+                        if (v == word_identifier) {
+                            _Psi[t][k][v] = 0.0;
+                        }
                         _Psi[t][k][v] = generate_noise_from_normal_distribution();
                     }
                 }

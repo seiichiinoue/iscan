@@ -17,7 +17,7 @@ DEFINE_int32(context_window_width, 5, "context window width");
 DEFINE_int32(num_iteration, 1000, "number of iteration");
 DEFINE_int32(burn_in_period, 500, "burn in period");
 DEFINE_int32(top_n_word, 3000, "threshold for vocabulary selection");
-DEFINE_int32(min_word_count, 0, "threshold of low-frequency words");
+DEFINE_int32(min_word_count, -1, "threshold of low-frequency words");
 DEFINE_int32(min_snippet_count, 1, "threshold for snippets size in the time point");
 DEFINE_int32(min_snippet_length, 1, "threshold of size of snippet");
 DEFINE_string(data_path, "./data/transport/corpus.txt", "path to dataset for training");
