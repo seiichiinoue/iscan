@@ -247,7 +247,7 @@ public:
             }
         }
         // choose word with the lowest rank variation
-        size_t static_word_id = -1;
+        size_t static_word_id = _scan->_vocab_size;
         int best_rank_variation = 1e5;
         for (int v=0; v<_scan->_vocab_size; ++v) {
             if (!rank_flag[v]) {
@@ -259,7 +259,7 @@ public:
                 best_rank_variation = rank_variation_v;
             }
         }
-        assert(static_word_id != -1);
+        assert(static_word_id != _scan->_vocab_size);
         _word_identifier = static_word_id;
     }
     void _initialize_parameters_with_mle() {
