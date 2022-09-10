@@ -586,6 +586,7 @@ public:
                 double sampled = _prior_mean_psi[v] + noise * prior_sigma;
                 _scan->_Psi[t][k][v] = sampled;
             }
+            assert(_scan->_Psi[t][k][_word_identifier] == 0.0);
             // sanity check
             double sum = 0;
             for (int v=0; v<_scan->_vocab_size; ++v) {

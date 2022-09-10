@@ -108,8 +108,9 @@ namespace scan {
                     for (int v=0; v<_vocab_size; ++v) {
                         if (v == word_identifier) {
                             _Psi[t][k][v] = 0.0;
+                        } else {
+                            _Psi[t][k][v] = generate_noise_from_normal_distribution();
                         }
-                        _Psi[t][k][v] = generate_noise_from_normal_distribution();
                     }
                 }
             }
