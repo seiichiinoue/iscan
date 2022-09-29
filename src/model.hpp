@@ -291,6 +291,9 @@ public:
                 }
                 // initialize Psi with MLE
                 for (int v=0; v<_scan->_vocab_size; ++v) {
+                    if (v == _word_identifier) {
+                        continue;
+                    }
                     _scan->_Psi[t][k][v] = ((double)cnt_t_k[v] + 0.01) / ((double)sum_cnt_t_k + (_scan->_vocab_size * 0.01));
                     _scan->_Psi[t][k][v] = log(_scan->_Psi[t][k][v]);
                 }
