@@ -3,7 +3,7 @@
 // hyper parameters flags
 DEFINE_int32(num_sense, 8, "number of sense");
 DEFINE_double(kappa_phi, 4.0, "initial value of kappa_phi");
-DEFINE_double(kappa_psi, 10.0, "initial value of kappa_psi (fixed)");
+DEFINE_double(kappa_psi, 100.0, "initial value of kappa_psi (fixed)");
 DEFINE_double(gamma_a, 7.0, "hyperparameter of gamma prior");
 DEFINE_double(gamma_b, 3.0, "hyperparameter of gamma prior");
 DEFINE_int32(kappa_phi_start, 100, "start point of kappa sampling");
