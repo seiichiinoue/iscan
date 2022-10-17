@@ -17,6 +17,7 @@
 #define YEAR_INTERVAL 20
 #define BURN_IN_PERIOD 500
 #define TOP_N_WORD 3000
+#define TOP_P_WORD 0.8
 #define MIN_WORD_COUNT -1
 #define MIN_SNIPPET_COUNT 1
 #define KAPPA_PHI_START 100

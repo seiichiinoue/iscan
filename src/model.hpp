@@ -95,6 +95,7 @@ public:
 
     int _burn_in_period;
     int _top_n_word;
+    double _top_p_word;
     int _min_word_count;
     int _min_snippet_count;
     int _min_snippet_length;
@@ -132,6 +133,7 @@ public:
 
         _burn_in_period = BURN_IN_PERIOD;
         _top_n_word = TOP_N_WORD;
+        _top_p_word = TOP_P_WORD;
         _min_word_count = MIN_WORD_COUNT;
         _min_snippet_count = MIN_SNIPPET_COUNT;
         _min_snippet_length = MIN_SNIPPET_LENGTH;
@@ -300,14 +302,44 @@ public:
             }
         }
     }
+    // void _compute_min_word_count() {
+    //     vector<pair<size_t, int>> ordered_vocab(_word_frequency.begin(), _word_frequency.end());
+    //     sort(ordered_vocab.begin(), ordered_vocab.end(), compare);
+    //     if (ordered_vocab.size() > _top_n_word) {
+    //         _min_word_count = ordered_vocab[_top_n_word-1].second;
+    //     } else {
+    //         _min_word_count = 0;
+    //     }
+    // }
     void _compute_min_word_count() {
         vector<pair<size_t, int>> ordered_vocab(_word_frequency.begin(), _word_frequency.end());
         sort(ordered_vocab.begin(), ordered_vocab.end(), compare);
-        if (ordered_vocab.size() > _top_n_word) {
-            _min_word_count = ordered_vocab[_top_n_word-1].second;
-        } else {
+        int sum_word_freq = 0;
+        for (int v=0; v<_scan->_vocab_size; ++v) {
+            sum_word_freq += _word_frequency[v];
+        }
+        double num_use_words = (double)sum_word_freq * _top_p_word;
+        int cum_word_freq = 0;
+        for (int v=0; v<_scan->_vocab_size; ++v) {
+            cum_word_freq += ordered_vocab[v].second;
+            if (cum_word_freq >= num_use_words) {
+                _min_word_count = ordered_vocab[v].second;
+                break;
+            }
+        }
+        if (_min_word_count == -1) {
             _min_word_count = 0;
         }
+    }
+    double _compute_sigma_word_freq() {
+        int actual_vocab_size = get_vocab_size();
+        double mean = (double)get_sum_word_frequency() / (double)actual_vocab_size;
+        double sigma = 0.0;
+        for (int v=0; v<_scan->_vocab_size; ++v) {
+            sigma += pow(_word_frequency[v] - mean, 2);
+        }
+        sigma = sqrt(sigma / (double)actual_vocab_size);
+        return sigma;
     }
     void initialize_cache() {
         _logistic_Phi = new double*[_scan->_n_t];
@@ -338,9 +370,11 @@ public:
         int num_docs = _dataset.size();
         _scan->initialize_cache(num_time, vocab_size, num_docs);
         // compute min_word_count according to top_n_word
-        if (_min_word_count == -1) {  // initial value
-            _compute_min_word_count();
-        }
+        // if (_min_word_count == -1) {  // initial value
+        //     _compute_min_word_count();
+        // }
+        // compute min_word_count according to top_p_word
+        _compute_min_word_count();
         // find identifier; use as identifier in sense-word distribution
         _find_word_identifier();
         _scan->initialize_parameters(_word_identifier);
@@ -399,6 +433,9 @@ public:
     }
     void set_top_n_word(int top_n_word) {
         _top_n_word = top_n_word;
+    }
+    void set_top_p_word(double top_p_word) {
+        _top_p_word = top_p_word;
     }
     void set_min_word_count(int min_word_count) {
         _min_word_count = min_word_count;
@@ -751,6 +788,7 @@ public:
         oarchive << _year_interval;
         oarchive << _burn_in_period;
         oarchive << _top_n_word;
+        oarchive << _top_p_word;
         oarchive << _min_word_count;
         oarchive << _min_snippet_count;
         oarchive << _min_snippet_length;
@@ -775,6 +813,7 @@ public:
             iarchive >> _year_interval;
             iarchive >> _burn_in_period;
             iarchive >> _top_n_word;
+            iarchive >> _top_p_word;
             iarchive >> _min_word_count;
             iarchive >> _min_snippet_count;
             iarchive >> _min_snippet_length;

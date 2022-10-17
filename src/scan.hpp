@@ -88,7 +88,7 @@ namespace scan {
             _Phi = new double*[_n_t];
             _Psi = new double**[_n_t];
         }
-        void initialize_parameters(int word_identifier=0) {
+        void initialize_parameters(int word_identifier=0, double sigma=1.0) {
             for (int k=0; k<_n_k; ++k) {
                 _kappa_phi[k] = KAPPA_PHI;
             }
@@ -109,7 +109,7 @@ namespace scan {
                         if (v == word_identifier) {
                             _Psi[t][k][v] = 0.0;
                         } else {
-                            _Psi[t][k][v] = generate_noise_from_normal_distribution();
+                            _Psi[t][k][v] = generate_noise_from_normal_distribution() * sigma;
                         }
                     }
                 }

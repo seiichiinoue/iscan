@@ -17,6 +17,7 @@ DEFINE_int32(context_window_width, 5, "context window width");
 DEFINE_int32(num_iteration, 1000, "number of iteration");
 DEFINE_int32(burn_in_period, 500, "burn in period");
 DEFINE_int32(top_n_word, 3000, "threshold for vocabulary selection");
+DEFINE_double(top_p_word, 0.8, "threshold for vocabulary selection");
 DEFINE_int32(min_word_count, -1, "threshold of low-frequency words");
 DEFINE_int32(min_snippet_count, 1, "threshold for snippets size in the time point");
 DEFINE_int32(min_snippet_length, 1, "threshold of size of snippet");
@@ -42,6 +43,7 @@ int main(int argc, char *argv[]) {
     trainer.set_context_window_width(FLAGS_context_window_width);
     trainer.set_burn_in_period(FLAGS_burn_in_period);
     trainer.set_top_n_word(FLAGS_top_n_word);
+    trainer.set_top_p_word(FLAGS_top_p_word);
     trainer.set_min_word_count(FLAGS_min_word_count);
     trainer.set_min_snippet_count(FLAGS_min_snippet_count);
     trainer.set_min_snippet_length(FLAGS_min_snippet_length);
@@ -66,8 +68,9 @@ int main(int argc, char *argv[]) {
         << ", gamma_a: " << trainer._scan->_gamma_a << ", gamma_b: " << trainer._scan->_gamma_b
         << ", scaling_coeff: " << trainer._scan->_scaling_coeff
         << ", num_iteration: " << FLAGS_num_iteration
-        << ", min_word_count: " << FLAGS_min_word_count
+        << ", min_word_count: " << trainer._min_word_count
         << ", top_n_word: " << FLAGS_top_n_word
+        << ", top_p_word: " << FLAGS_top_p_word
         << ", min_snippet_count: " << FLAGS_min_snippet_count
         << ", min_snippet_length: " << FLAGS_min_snippet_length << "}" << endl;
     cout << "num of docs: " << trainer._scan->_num_docs << endl;
