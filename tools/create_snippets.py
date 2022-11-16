@@ -27,16 +27,35 @@ available_pos_ja = ['名詞', '形容詞', '動詞', '形状詞', '副詞']
 stop_words = set(stopwords.words('english'))
 stop_words |= {"'", '"', ':', ';', '.', ',', '-', '--', '...', '//', '/', '!', '?', "'s", "@", "<p>", "(", ")", "・"}
 
-def _preprocess_english(sents):
+def _precalc_english(corpora):
+    global word_freq, sum_word_freq
+    for year, corpus in corpora:
+        for line in corpus:
+            for word in line:
+                word_freq[word] += 1
+    sum_word_freq = sum(word_freq.values())
+    return None
+
+def _preprocess_english(sents, sub_sampling=False):
+    def _remove_prob(x):
+        return 1.0 - np.sqrt(1e-4 / float(word_freq[x] / sum_word_freq))
     sents = tagger.tag_sents(sents)
     ret = []
     for line in sents:
         line = [(w, pos) for w, pos in line if pos in available_pos_en]
-        line = [lemmatizer.lemmatize(w.lower(), pos2id[pos]) for w, pos in line if not w.lower() in stop_words and w.isalpha()]
+        if sub_sampling:
+            line = [lemmatizer.lemmatize(w.lower(), pos2id[pos]) for w, pos in line 
+                    if not w.lower() in stop_words 
+                    and w.isalpha()
+                    and (1 if _remove_prob(w) < 0 else 1 - np.random.binomial(1, _remove_prob(w)))]
+        else:
+            line = [lemmatizer.lemmatize(w.lower(), pos2id[pos]) for w, pos in line 
+                    if not w.lower() in stop_words 
+                    and w.isalpha()]
         ret.append(line)
     return ret
 
-def _precalc_statistics(corpora):
+def _precalc_japanese(corpora):
     global word_freq, sum_word_freq
     for year, corpus in corpora:
         for line in corpus:
@@ -79,8 +98,10 @@ def create_snippets(corpora,
                     window_size=5,
                     output_path="data"):
     snippets = {i: {target_words[j]: [] for j in range(len(target_words))} for i in range(year_start, year_end+1)}
-    if lang == "ja":
-        _precalc_statistics(corpora)
+    if lang == "en":
+        _precalc_english(corpora)
+    elif lang == "ja":
+        _precalc_japanese(corpora)
     for year, corpus in tqdm(corpora):
         if lang == "en":
             corpus = _remove_unnecessary_sents(corpus, target_words)
