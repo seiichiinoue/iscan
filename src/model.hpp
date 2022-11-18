@@ -224,6 +224,10 @@ public:
         vector<int> rank_flag(_scan->_vocab_size, true);
         for (int t=0; t<_scan->_n_t; ++t) {
             unordered_map<size_t, int> freq_t = freq[t];
+            // ignore if vocab size in t is too small
+            if (freq_t.size() <  get_vocab_size() * 0.1) {
+                continue;
+            }
             vector<pair<size_t, int>> ord_freq_t(freq_t.begin(), freq_t.end());
             sort(ord_freq_t.begin(), ord_freq_t.end(), compare);
             // convert freqs to ranks
