@@ -720,6 +720,36 @@ public:
         }
         return log_pw;
     }
+    double compute_perplexity_of_word_distribution() {
+        _update_logistic_Psi();
+        double ppl = 0.0;
+        for (int t=0; t<_scan->_n_t; ++t) {
+            for (int k=0; k<_scan->_n_k-1; ++k) {
+                double ent_t_k = 0.0;
+                for (int v=0; v<_scan->_vocab_size; ++v) {
+                    if (_word_frequency[v] < _min_word_count) {
+                        continue;
+                    }
+                    ent_t_k += log(_logistic_Psi[t][k][v]) * _logistic_Psi[t][k][v];
+                }
+                ppl += exp(-1 * ent_t_k);
+            }
+        }
+        return ppl / (double)(_scan->_n_t * _scan->_n_k);
+    }
+    double compute_perplexity_of_sense_distribution() {
+        _update_logistic_Phi();
+        double ent = 0.0;
+        for (int k=0; k<_scan->_n_k; ++k) {
+            double mean_logistic_phi_k = 0.0;
+            for (int t=0; t<_scan->_n_t; ++t) {
+                mean_logistic_phi_k += _logistic_Phi[t][k];
+            }
+            mean_logistic_phi_k /= (double)(_scan->_n_t);
+            ent += log(mean_logistic_phi_k) * mean_logistic_phi_k;
+        }
+        return exp(-1 * ent);
+    }
     void train(int iter=1000, string save_path="results/bin/scan.model") {
         for (int i=0; i<iter; ++i) {
             ++_current_iter;
@@ -731,14 +761,18 @@ public:
             }
             double log_pw = compute_log_likelihood();
             double ppl = exp((-1 * log_pw) / get_sum_word_frequency());
+            double word_ppl = compute_perplexity_of_word_distribution();
+            double sense_ppl = compute_perplexity_of_sense_distribution();
             cout << "iter: " << _current_iter 
-                << " log_likelihood: " << log_pw
-                << " perplexity: " << ppl 
-                << " kappa_phi: ";
+                 << " log_likelihood: " << log_pw
+                 << " perplexity: " << ppl 
+                 << " kappa_phi: ";
             for (int k=0; k<_scan->_n_k-1; ++k) {
                 cout << _scan->_kappa_phi[k] << ",";
             }
-            cout << _scan->_kappa_phi[_scan->_n_k-1] << endl;
+            cout << _scan->_kappa_phi[_scan->_n_k-1];
+            cout << " word_perplexity: " << word_ppl
+                 << " sense_perplexity: " << sense_ppl << endl;
             save(save_path);
         }
     }
