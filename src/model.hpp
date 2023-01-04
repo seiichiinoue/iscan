@@ -265,7 +265,7 @@ public:
         assert(static_word_id != _scan->_vocab_size);
         _word_identifier = static_word_id;
     }
-    void _initialize_parameters_with_mle() {
+    void _initialize_sense_parameters_with_mle() {
         for (int t=0; t<_scan->_n_t; ++t) {
             vector<int> cnt_t(_scan->_n_k, 0);
             int sum_cnt_t = 0;
@@ -277,8 +277,11 @@ public:
             // initialize Phi with MLE
             for (int k=0; k<_scan->_n_k; ++k) {
                 _scan->_Phi[t][k] = ((double)cnt_t[k] + 0.01) / ((double)sum_cnt_t + (_scan->_n_k * 0.01));
-                _scan->_Phi[t][k] = log(_scan->_Phi[t][k]);
             }
+        }
+    }
+    void _initialize_word_parameters_with_mle() {
+        for (int t=0; t<_scan->_n_t; ++t) {
             for (int k=0; k<_scan->_n_k; ++k) {
                 vector<int> cnt_t_k(_scan->_vocab_size, 0);
                 int sum_cnt_t_k = 0;
@@ -295,14 +298,29 @@ public:
                 }
                 // initialize Psi with MLE
                 for (int v=0; v<_scan->_vocab_size; ++v) {
+                    _scan->_Psi[t][k][v] = ((double)cnt_t_k[v] + 0.01) / ((double)sum_cnt_t_k + (_scan->_vocab_size * 0.01));
+                }
+                // standarization
+                double mean_psi = _scan->_Psi[t][k][_word_identifier];
+                double var_psi = 0.0;
+                for (int v=0; v<_scan->_vocab_size; ++v) {
+                    var_psi += pow(_scan->_Psi[t][k][v] - mean_psi, 2);
+                }
+                var_psi /= _scan->_vocab_size;
+                for (int v=0; v<_scan->_vocab_size; ++v) {
                     if (v == _word_identifier) {
+                        _scan->_Psi[t][k][v] = 0.0;
                         continue;
                     }
-                    _scan->_Psi[t][k][v] = ((double)cnt_t_k[v] + 0.01) / ((double)sum_cnt_t_k + (_scan->_vocab_size * 0.01));
-                    _scan->_Psi[t][k][v] = log(_scan->_Psi[t][k][v]);
+                    _scan->_Psi[t][k][v] -= mean_psi;
+                    _scan->_Psi[t][k][v] /= sqrt(var_psi);
                 }
             }
         }
+    }
+    void _initialize_parameters_with_mle() {
+        // _initialize_sense_parameters_with_mle();
+        _initialize_word_parameters_with_mle();
     }
     void _compute_min_word_count() {
         vector<pair<size_t, int>> ordered_vocab(_word_frequency.begin(), _word_frequency.end());
