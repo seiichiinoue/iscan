@@ -351,7 +351,7 @@ public:
             _probs[k] = 0.0;
         }
     }
-    void prepare(bool mle_initialize=false) {
+    void prepare(bool use_initial_variance=false, bool mle_initialize=false) {
         int num_time = ((_end_year - _start_year) + (_year_interval - 1)) / _year_interval;
         int vocab_size = _vocab->num_words();
         int num_docs = _dataset.size();
@@ -362,7 +362,9 @@ public:
         }
         // find identifier; use as identifier in sense-word distribution
         _find_word_identifier();
-        _compute_initial_variance();
+        if (use_initial_variance) {
+            _compute_initial_variance();
+        }
         _scan->initialize_parameters(_word_identifier, _init_var);
         // initialize parameters $\phi$ and $\psi$ with MLE
         if (mle_initialize) {
