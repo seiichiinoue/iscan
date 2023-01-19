@@ -88,6 +88,7 @@ public:
     double* _prior_sigma2_phi;
     double* _prior_mean_psi;
     size_t _word_identifier;
+    double _init_var;
 
     int _start_year;
     int _end_year;
@@ -123,6 +124,7 @@ public:
         _prior_sigma2_phi = NULL;
         _prior_mean_psi = NULL;
         _word_identifier = 0;
+        _init_var = 1.0;
 
         _sigma_coeff = SIGMA_COEFF;
 
@@ -313,6 +315,19 @@ public:
             _min_word_count = 0;
         }
     }
+    void _compute_initial_variance() {
+        double denom = (double)get_sum_word_frequency();
+        double log_prob_mean = 0.0, log_prob_var = 0.0;
+        for (int v=0; v<_scan->_vocab_size; ++v) {
+            log_prob_mean += log(_word_frequency[v] / denom);
+        }
+        log_prob_mean /= _scan->_vocab_size;
+        for (int v=0; v<_scan->_vocab_size; ++v) {
+            log_prob_var += pow(log(_word_frequency[v] / denom) - log_prob_mean, 2);
+        }
+        log_prob_var /= _scan->_vocab_size;
+        _init_var = log_prob_var;
+    }
     void initialize_cache() {
         _logistic_Phi = new double*[_scan->_n_t];
         _logistic_Psi = new double**[_scan->_n_t];
@@ -336,7 +351,7 @@ public:
             _probs[k] = 0.0;
         }
     }
-    void prepare(bool mle_initialize=false) {
+    void prepare(bool use_initial_variance=false, bool mle_initialize=false) {
         int num_time = ((_end_year - _start_year) + (_year_interval - 1)) / _year_interval;
         int vocab_size = _vocab->num_words();
         int num_docs = _dataset.size();
@@ -347,7 +362,10 @@ public:
         }
         // find identifier; use as identifier in sense-word distribution
         _find_word_identifier();
-        _scan->initialize_parameters(_word_identifier);
+        if (use_initial_variance) {
+            _compute_initial_variance();
+        }
+        _scan->initialize_parameters(_word_identifier, _init_var);
         // initialize parameters $\phi$ and $\psi$ with MLE
         if (mle_initialize) {
             _initialize_parameters_with_mle();

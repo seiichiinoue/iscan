@@ -24,6 +24,7 @@ DEFINE_string(data_path, "./data/transport/corpus.txt", "path to dataset for tra
 DEFINE_string(save_path, "./bin/scan.model", "path to model for archive");
 DEFINE_string(load_path, "./bin/scan.model", "path to model for loading");
 DEFINE_bool(from_archive, false, "load archive or not");
+DEFINE_bool(use_initial_variance, false, "use initial variance for initialization of word distribution");
 DEFINE_bool(mle_initialize, false, "use mle for parameter initialization or not");
 
 int main(int argc, char *argv[]) {
@@ -48,7 +49,7 @@ int main(int argc, char *argv[]) {
     // load dataset
     trainer.load_documents(FLAGS_data_path);
     // prepare model
-    trainer.prepare(FLAGS_mle_initialize);
+    trainer.prepare(FLAGS_use_initial_variance, FLAGS_mle_initialize);
     // initialize parameters
     trainer.set_kappa_phi(FLAGS_kappa_phi);
     trainer.set_kappa_psi(FLAGS_kappa_psi);
