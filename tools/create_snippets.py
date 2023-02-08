@@ -21,8 +21,9 @@ lemmatizer = WordNetLemmatizer()
 tagger = PerceptronTagger()
 word_freq = defaultdict(int)
 sum_word_freq = None
-pos2id = {'NN': 'n', 'NNS': 'n', 'NNP': 'n', 'NNPS': 'n', 'VB': 'v', 'VBD': 'v', 'VBG': 'v', 'VBN': 'v', 'VBP': 'v', 'VBZ': 'v', 'JJ': 'a', 'JJR': 'a', 'JJS': 'a'}
-available_pos_en = ['NN', 'NNS', 'NNP', 'NNPS', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', 'JJ', 'JJR', 'JJS']
+pos2id = {'NN': 'n', 'NNS': 'n', 'NNP': 'n', 'NNPS': 'n', 'VB': 'v', 'VBD': 'v', 'VBG': 'v', 'VBN': 'v', 'VBP': 'v', 'VBZ': 'v', 'JJ': 'a', 'JJR': 'a', 'JJS': 'a', 'RB': 'r', 'RBR': 'r', 'RBS': 'r'}  # for lemmatizer
+# available_pos_en = ['NN', 'NNS', 'NNP', 'NNPS', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', 'JJ', 'JJR', 'JJS']
+available_pos_en = ['NN', 'NNS', 'NNP', 'NNPS', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', 'JJ', 'JJR', 'JJS', 'RB', 'RBR', 'RBS']
 available_pos_ja = ['名詞', '形容詞', '動詞', '形状詞', '副詞']
 stop_words = set(stopwords.words('english'))
 stop_words |= {"'", '"', ':', ';', '.', ',', '-', '--', '...', '//', '/', '!', '?', "'s", "@", "<p>", "(", ")", "・"}
@@ -38,7 +39,7 @@ def _precalc_english(corpora):
 
 def _preprocess_english(sents, sub_sampling=False):
     def _remove_prob(x):
-        return 1.0 - np.sqrt(1e-4 / float(word_freq[x] / sum_word_freq))
+        return 1.0 - np.sqrt(1e-3 / float(word_freq[x] / sum_word_freq))
     sents = tagger.tag_sents(sents)
     ret = []
     for line in sents:
@@ -96,7 +97,8 @@ def create_snippets(corpora,
                     year_start=1800,
                     year_end=2010,
                     window_size=5,
-                    output_path="data"):
+                    output_path="data",
+                    sub_sampling=False):
     snippets = {i: {target_words[j]: [] for j in range(len(target_words))} for i in range(year_start, year_end+1)}
     if lang == "en":
         _precalc_english(corpora)
@@ -105,7 +107,7 @@ def create_snippets(corpora,
     for year, corpus in tqdm(corpora):
         if lang == "en":
             corpus = _remove_unnecessary_sents(corpus, target_words)
-            corpus = _preprocess_english(corpus)
+            corpus = _preprocess_english(corpus, sub_sampling=sub_sampling)
         elif lang == "ja":
             corpus = _preprocess_japanese(corpus)
         for line in corpus:
@@ -158,6 +160,7 @@ parser.add_argument('--year-end', default=2010, type=int)
 parser.add_argument('--window-size', default=5, type=int)
 parser.add_argument('--input-path', default='coha', type=str)
 parser.add_argument('--output-path', default='data', type=str)
+parser.add_argument('--sub-sampling', action='store_true')
 args = parser.parse_args()
 
 corpora = load_corpora(args.input_path, args.lang)
@@ -168,4 +171,5 @@ create_snippets(corpora=corpora,
                 year_start=args.year_start,
                 year_end=args.year_end,
                 window_size=args.window_size,
-                output_path=args.output_path)
+                output_path=args.output_path,
+                sub_sampling=args.sub_sampling)
