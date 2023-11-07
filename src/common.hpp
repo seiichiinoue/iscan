@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include <cmath>
-#include "fmath.hpp"
 #define NUM_SENSE 8
 #define NUM_TIME 10
 #define KAPPA_PHI 4.0
