@@ -50,4 +50,4 @@ $ ./prob -model_path=PATH_TO_MODEL -use_npmi=true
 
 ## Reference
 
-Seiichi Inoue, Mamoru Komachi, Toshinobu Ogiso, Hiroya Takamura, and Daichi Mochihashi. 2022. Infinite SCAN: [An Infinite Model of Diachronic Semantic Change](https://aclanthology.org/2022.emnlp-main.104/). In Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing, pages 1605–1616, Abu Dhabi, United Arab Emirates. Association for Computational Linguistics.
+Seiichi Inoue, Mamoru Komachi, Toshinobu Ogiso, Hiroya Takamura, and Daichi Mochihashi. 2022. [Infinite SCAN: An Infinite Model of Diachronic Semantic Change](https://aclanthology.org/2022.emnlp-main.104/). In Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing, pages 1605–1616, Abu Dhabi, United Arab Emirates. Association for Computational Linguistics.
