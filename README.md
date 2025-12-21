@@ -17,7 +17,7 @@ Create snippets:
 - before run command, you need to prepare time-series corpora.
 - corpora should be placed in an arbitrary directory consisting of a group of files by year.
 
-```
+```sh
 $ python3 tools/create_snippets.py \
     --lang LANG \
     --year-start YEAR_START \
@@ -32,7 +32,7 @@ $ python3 tools/create_snippets.py \
 
 Estimation: compile and estimate model.
 
-```
+```sh
 $ make
 $ ./scan -num_iteration=1000 \
     -min_word_count=10 \
@@ -42,7 +42,7 @@ $ ./scan -num_iteration=1000 \
 
 Estimation with pseudo data: generate pseudo data and estimate model.
 
-```
+```sh
 $ python3 tools/create_snippets.py \
     --num-times NUM_TIMES \
     --num-senses NUM_SENSES \
@@ -63,7 +63,7 @@ $ ./scan -data_path=PATH_TO_DATA \
 
 Output estimated parameters: build and run.
 
-```
+```sh
 $ make prob
 $ ./prob -model_path=PATH_TO_MODEL -use_npmi=true
 ```
